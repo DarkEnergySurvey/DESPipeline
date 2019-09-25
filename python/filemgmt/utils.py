@@ -1,15 +1,13 @@
-# $Id: utils.py 48549 2019-05-20 19:27:44Z friedel $
-# $Rev:: 48549                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2019-05-20 14:27:44 #$:  # Date of last commit.
-
-import despymisc.miscutils as miscutils
+"""
+    Utility functions for FileMgmt.
+"""
 import os
 import subprocess
 from stat import S_IMODE, S_ISDIR
 import pwd
 import grp
 import datetime
+import despymisc.miscutils as miscutils
 
 CHUNK = 1024.
 UNITS = {0 : 'b',
@@ -20,10 +18,60 @@ UNITS = {0 : 'b',
          5 : 'P'}
 
 
+def http_code_str(hcode):
+    """ Convert an http code into text
+
+        Parameters
+        ----------
+        hcode : str
+            The http code to convert
+
+        Returns
+        -------
+        Str containing the text description of the http code
+    """
+    codestr = "Unmapped http_code (%s)" % hcode
+    code2str = {'200': 'Success/Ok',
+                '201': 'Success/Created',
+                '204': 'No content (unknown status)',
+                '301': 'Directory already existed',
+                '304': 'Not modified',
+                '400': 'Bad Request (check command syntax)',
+                '401': 'Unauthorized (check username/password)',
+                '403': 'Forbidden (check url, check perms)',
+                '404': 'Not Found (check url exists and is readable)',
+                '405': 'Method not allowed',
+                '429': 'Too Many Requests (check transfer throttling)',
+                '500': 'Internal Server Error',
+                '501': 'Not implemented/understood',
+                '507': 'Insufficient storage (check disk space)'}
+
+
+    # convert given code to str (converting to int can fail)
+    if str(hcode) in code2str:
+        codestr = code2str[str(hcode)]
+    return codestr
+
 
 ##################################################################################################
 def get_config_vals(archive_info, config, keylist):
-    """ Search given dicts for specific values """
+    """ Search given dicts for specific values
+
+        Parameters
+        ----------
+        archive_info : dict
+            Dictionary of the archive data
+
+        config : dict
+            Dictionary of the config data
+
+        keylist : dict
+            Dictionary of the keys to be searched for and whether they are required or optional
+
+        Returns
+        -------
+        dict of the serach results
+    """
     info = {}
     for k, st in keylist.items():
         if archive_info is not None and k in archive_info:
@@ -40,6 +88,7 @@ def get_config_vals(archive_info, config, keylist):
 
 
 def convert_permissions(perm):
+    """ convert numeric permissions to text based """
     if isinstance(perm, (int, long)):
         perm = str(perm)
     lead = 0
@@ -77,6 +126,7 @@ def convert_permissions(perm):
 
 
 def ls_ld(fname):
+    """ do an ls -ld on the given file/directory name """
     try:
         st = os.stat(fname)
         info = pwd.getpwuid(st.st_uid)
@@ -101,6 +151,7 @@ def ls_ld(fname):
 
 
 def find_ls(base):
+    """ do an ls -ld on each file/diretory in the given input and its children, recursively """
     for root, dirs, files in os.walk(base):
         for d in dirs:
             print ls_ld(os.path.join(root, d))
@@ -109,24 +160,25 @@ def find_ls(base):
 
 
 def get_mount_point(pathname):
-    "Get the mount point of the filesystem containing pathname"
-    pathname= os.path.normcase(os.path.realpath(pathname))
-    parent_device= path_device= os.stat(pathname).st_dev
+    """ Get the mount point of the filesystem containing pathname """
+    pathname = os.path.normcase(os.path.realpath(pathname))
+    parent_device = path_device = os.stat(pathname).st_dev
     while parent_device == path_device:
-        mount_point= pathname
-        pathname= os.path.dirname(pathname)
-        if pathname == mount_point: break
-        parent_device= os.stat(pathname).st_dev
+        mount_point = pathname
+        pathname = os.path.dirname(pathname)
+        if pathname == mount_point:
+            break
+        parent_device = os.stat(pathname).st_dev
     return mount_point
 
 def get_mounted_device(pathname):
     "Get the device mounted at pathname"
     # uses "/proc/mounts"
-    pathname= os.path.normcase(pathname) # might be unnecessary here
+    pathname = os.path.normcase(pathname) # might be unnecessary here
     try:
         with open("/proc/mounts", "r") as ifp:
             for line in ifp:
-                fields= line.rstrip('\n').split()
+                fields = line.rstrip('\n').split()
                 # note that line above assumes that
                 # no mount points contain whitespace
                 if fields[1] == pathname:
@@ -136,6 +188,14 @@ def get_mounted_device(pathname):
     return None # explicit
 
 def reduce(size):
+    """ reduce the input size from a large number to a much smaller one along with the
+        appropriate unit tag. The result will lose precision as it is cat to an int,
+        best for estimates.
+
+        Examples
+        --------
+        reduce(2500000) => 2M
+    """
     count = 0
     while size > CHUNK:
         size /= CHUNK
@@ -143,8 +203,8 @@ def reduce(size):
     return "%i%s" % (int(size), UNITS[count])
 
 def get_fs_space(pathname):
-    "Get the free space of the filesystem containing pathname"
-    stat= os.statvfs(pathname)
+    """ Get the free space of the filesystem containing pathname """
+    stat = os.statvfs(pathname)
     # use f_bfree for superuser, or f_bavail if filesystem
     # has reserved space for superuser
     free = stat.f_bfree * stat.f_bsize
@@ -153,6 +213,7 @@ def get_fs_space(pathname):
     return total, free, used
 
 def df_h(path):
+    """ do a df -h """
     mount = get_mount_point(path)
     dev = get_mounted_device(mount)
     total, free, used = get_fs_space(path)

@@ -1,9 +1,4 @@
-# $Id: job_mvmt_local.py 18938 2014-02-04 19:09:06Z mgower $
-# $Rev:: 18938                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2014-02-04 13:09:06 #$:  # Date of last commit.
-
-"""
+""" Move files via http
 """
 
 __version__ = "$Rev: 18938 $"
@@ -12,18 +7,36 @@ import copy
 
 import despymisc.miscutils as miscutils
 import filemgmt.http_utils as http_utils
+import filemgmt.filemgmt_defs as fmdefs
 
 DES_SERVICES = 'des_services'
 DES_HTTP_SECTION = 'des_http_section'
 
 class JobArchiveHttp(object):
-    """
+    """Class for transferring files via http
+
+        Parameters
+        ----------
+        homeinfo : dict
+            Dictionary of data on the sending machine
+
+        targetinfo : dict
+            Dictionary of data on the destination machine
+
+        mvmtinfo : unused
+
+        tstats : dict
+            Dictionary for tracking transfer statistics
+
+        config : dict
+            Dictionary of config values, default is None
     """
     # assumes home, target, and job dirs are read/write same machine
-
     @staticmethod
     def requested_config_vals():
-        return {DES_SERVICES:'REQ', DES_HTTP_SECTION:'REQ'}
+        """ Get the configuration values for this class
+        """
+        return {DES_SERVICES:fmdefs.REQUIRED, DES_HTTP_SECTION:fmdefs.REQUIRED}
 
     def __init__(self, homeinfo, targetinfo, mvmtinfo, tstats, config=None):
         self.home = homeinfo
@@ -40,6 +53,17 @@ class JobArchiveHttp(object):
 
 
     def home2job(self, filelist):
+        """ Stage and transfer files from the archive to the job
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         # if staging outside job, this function shouldn't be called
         if self.home is None:
             raise Exception("Home archive info is None.   Should not be calling this function")
@@ -57,6 +81,17 @@ class JobArchiveHttp(object):
 
 
     def target2job(self, filelist):
+        """ Transfer files from the target archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
         absfilelist = copy.deepcopy(filelist)
@@ -71,6 +106,17 @@ class JobArchiveHttp(object):
 
 
     def job2target(self, filelist):
+        """ Transfer files from the job to the target archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
         absfilelist = copy.deepcopy(filelist)
@@ -85,6 +131,17 @@ class JobArchiveHttp(object):
 
 
     def job2home(self, filelist, verify=False):
+        """ Transfer files from the job to the home archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         # if staging outside job, this function shouldn't be called
         if self.home is None:
             raise Exception("Home archive info is None.   Should not be calling this function")

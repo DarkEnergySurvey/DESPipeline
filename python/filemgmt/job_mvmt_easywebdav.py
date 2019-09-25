@@ -1,9 +1,4 @@
-# $Id: job_mvmt_easywebdav.py 46423 2017-12-19 21:07:55Z friedel $
-# $Rev:: 46423                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2017-12-19 15:07:55 #$:  # Date of last commit.
-
-"""
+""" Class for transferring files via webdav
 """
 
 __version__ = "$Rev: 46423 $"
@@ -13,27 +8,46 @@ import re
 
 import despymisc.miscutils as miscutils
 import filemgmt.easywebdav_utils as ewd_utils
+import filemgmt.filemgmt_defs as fmdefs
 
 DES_SERVICES = 'des_services'
 DES_HTTP_SECTION = 'des_http_section'
 
 class JobArchiveEwd(object):
-    """
+    """ Class for transferring files via webdav
+
+        Parameters
+        ----------
+        homeinfo : dict
+            Dictionary of data on the sending machine
+
+        targetinfo : dict
+            Dictionary of data on the destination machine
+
+        mvmtinfo : unused
+
+        tstats : dict
+            Dictionary for tracking transfer statistics
+
+        config : dict
+            Dictionary of config values, default is None
     """
     # assumes home, target, and job dirs are read/write same machine
 
     @staticmethod
     def requested_config_vals():
-        return {DES_SERVICES:'REQ', DES_HTTP_SECTION:'REQ'}
+        """ Get the configuration values for this class
+        """
+        return {DES_SERVICES: fmdefs.REQUIRED, DES_HTTP_SECTION: fmdefs.REQUIRED}
 
     def __init__(self, homeinfo, targetinfo, mvmtinfo, tstats, config=None):
+        #pylint: disable=unused-argument
         self.home = homeinfo
         self.target = targetinfo
-        self.mvmt = mvmtinfo
         self.config = config
         self.tstats = tstats
 
-        m = re.match("(http://[^/]+)(/.*)", homeinfo['root_http'])
+        m = re.match(r"(http://[^/]+)(/.*)", homeinfo['root_http'])
         dest = m.group(1)
         for x in (DES_SERVICES, DES_HTTP_SECTION):
             if x not in self.config:
@@ -44,6 +58,17 @@ class JobArchiveEwd(object):
 
 
     def home2job(self, filelist):
+        """ Stage and transfer files from the archive to the job
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         # if staging outside job, this function shouldn't be called
         if self.home is None:
             raise Exception("Home archive info is None.   Should not be calling this function")
@@ -61,6 +86,17 @@ class JobArchiveEwd(object):
 
 
     def target2job(self, filelist):
+        """ Transfer files from the target archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
         absfilelist = copy.deepcopy(filelist)
@@ -75,6 +111,17 @@ class JobArchiveEwd(object):
 
 
     def job2target(self, filelist):
+        """ Transfer files from the job to the target archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
         absfilelist = copy.deepcopy(filelist)
@@ -89,6 +136,17 @@ class JobArchiveEwd(object):
 
 
     def job2home(self, filelist, verify=False):
+        """ Transfer files from the job to the home archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         # if staging outside job, this function shouldn't be called
         if verify:
             ver = 'F'

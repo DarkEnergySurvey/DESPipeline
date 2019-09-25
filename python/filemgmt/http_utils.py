@@ -1,8 +1,3 @@
-# $Id: disk_utils_local.py 18486 2014-01-29 15:58:12Z mgower $
-# $Rev:: 18486                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2014-01-29 09:58:12 #$:  # Date of last commit.
-
 """
 Routines for performing tasks on files available through http.
 """
@@ -11,7 +6,6 @@ __version__ = "$Rev: 18486 $"
 
 import os
 import sys
-sys.path.append('/home/friedel/.local/lib/python2.7/site-packages')
 import subprocess
 import re
 import traceback
@@ -23,39 +17,35 @@ import despymisc.miscutils as miscutils
 import filemgmt.filemgmt_defs as fmdefs
 import filemgmt.utils as utils
 
+#pylint: disable=c-extension-no-member
+class HttpUtils(object):
+    """
+        Class for transferring files via http (curl)
 
-def http_code_str(hcode):
-    codestr = "Unmapped http_code (%s)" % hcode
-    code2str = {'200': 'Success/Ok',
-                '201': 'Success/Created',
-                '204': 'No content (unknown status)',
-                '301': 'Directory already existed',
-                '304': 'Not modified',
-                '400': 'Bad Request (check command syntax)',
-                '401': 'Unauthorized (check username/password)',
-                '403': 'Forbidden (check url, check perms)',
-                '404': 'Not Found (check url exists and is readable)',
-                '405': 'Method not allowed',
-                '429': 'Too Many Requests (check transfer throttling)',
-                '500': 'Internal Server Error',
-                '501': 'Not implemented/understood',
-                '507': 'Insufficient storage (check disk space)'}
+        Get password for curl and initialize existing_directories variable.
 
+        Parameters
+        ----------
+        des_services : str
+            The services/password file to look in
 
-    # convert given code to str (converting to int can fail)
-    if str(hcode) in code2str:
-        codestr = code2str[str(hcode)]
-    return codestr
+        des_http_section : str
+            The section to look in for the username/password data
 
-class HttpUtils():
-    copyfiles_called = 0
+        numtries : int
+            The number of times to retry a transfer, default is 5
 
-    def __init__(self, des_services, des_http_section, numtries=5, secondsBetweenRetries=30):
-        """Get password for curl and initialize existing_directories variable.
+        secondsBetweenRetries : int
+            How many seconds between each retry
 
         >>> C = HttpUtils('test_http_utils/.desservices.ini', 'file-http')
         >>> len(C.curl_password)
-        25"""
+        25
+
+    """
+    copyfiles_called = 0
+
+    def __init__(self, des_services, des_http_section, numtries=5, secondsBetweenRetries=30):
         try:
             # Parse the .desservices.ini file:
             self.auth_params = serviceaccess.parse(des_services, des_http_section)
@@ -74,11 +64,22 @@ class HttpUtils():
         self.secondsBetweenRetries = secondsBetweenRetries
 
     def reset(self):
+        """ Reset curl
+        """
         self.curl.reset()
         self.curl.setopt(pycurl.USERPWD, self.curl_password)
 
     def check_url(self, P):
         """See if P is a url.
+
+            Parameters
+            ----------
+            P : str
+                The string to check if it is a valid URL
+
+            Returns
+            -------
+            bool
 
         >>> C = HttpUtils('test_http_utils/.desservices.ini', 'file-http')
         >>> C.check_url("http://desar2.cosmology.illinois.edu")
@@ -92,6 +93,9 @@ class HttpUtils():
     def verify(self):
         """ Method to verify if a file was completely transferred
 
+            Returns
+            -------
+            bool
         """
         try:
             self.curl.setopt(pycurl.URL, self.dst)
@@ -122,6 +126,21 @@ class HttpUtils():
             self.curl.setopt(pycurl.NOBODY, 0)
 
     def perform(self, cmd=None, verify=False, upload=False):
+        """ Do the transfer
+
+            Parameters
+            ----------
+            cmd : str
+                The command to run
+
+            verify : bool
+                Whether or not to verify the file size after transfer, default is
+                False (do not verify)
+
+            upload : bool
+                Whether this is an upload (True) or doenload (False), default it False
+
+        """
         for x in range(self.numtries):
             exitcode = pycurl.E_OK
             msg = None
@@ -147,13 +166,13 @@ class HttpUtils():
                     if x > 0:
                         print "Transfer took %i tries to succeed" % (x + 1)
                     return
-            
+
             miscutils.fwdebug_print("*" * 75)
             miscutils.fwdebug_print("CURL FAILURE")
             miscutils.fwdebug_print("curl command: %s" % cmd)
             miscutils.fwdebug_print("curl exitcode: %s (%s)" % (exitcode, msg))
             if httpcode is not None:
-                miscutils.fwdebug_print("curl http status: %s (%s)" % (httpcode, http_code_str(httpcode)))
+                miscutils.fwdebug_print("curl http status: %s (%s)" % (httpcode, utils.http_code_str(httpcode)))
             else:
                 miscutils.fwdebug_print("curl http status: unknown")
 
@@ -207,30 +226,46 @@ class HttpUtils():
 
         errmsg = "Curl operation failed with return code %d (%s), " % (exitcode, msg)
         if httpcode is not None:
-            errmsg += " http status %s (%s)" % (httpcode, http_code_str(httpcode))
+            errmsg += " http status %s (%s)" % (httpcode, utils.http_code_str(httpcode))
         else:
             errmsg += " http status unknown"
 
         raise Exception(errmsg)
 
     def create_http_intermediate_dirs(self, f):
-        """Create all directories that are valid prefixes of the URL *f*.
+        """ Create all directories that are valid prefixes of the URL *f*.
 
+            Parameters
+            ----------
+            f : str
+                The directory structure to create
         """
         # Making bar/ sometimes returns a 301 status even if there doesn't seem to be a bar/ in the directory.
-        m = re.match("(http://[^/]+)(/.*)", f)
+        m = re.match(r"(http://[^/]+)(/.*)", f)
         self.curl.setopt(pycurl.CUSTOMREQUEST, 'MKCOL')
         self.curl.setopt(pycurl.WRITEFUNCTION, lambda x: None)
         for x in miscutils.get_list_directories([m.group(2)]):
             if x not in self.existing_directories:
                 self.curl.setopt(pycurl.URL, m.group(1)+x)
-                if(self.perform(cmd='MKCOL %s' % (m.group(1)+x))):
+                if self.perform(cmd='MKCOL %s' % (m.group(1) + x)):
                     self.existing_directories.add(x)
         self.curl.unsetopt(pycurl.CUSTOMREQUEST)
         #self.curl.unsetopt(pycurl.URL)
 
 
     def get(self, verify=False):
+        """ Dowload a file
+
+            Parameters
+            ----------
+            verify : bool
+                Whether or not to verify the file size after transfer, default is
+                False (do not verify)
+
+            Returns
+            -------
+            float of the time the transfer took in seconds
+        """
         starttime = time.time()
         self.curl.setopt(pycurl.URL, self.src)
         self.curl.setopt(pycurl.WRITEFUNCTION, open(self.dst, 'wb').write)
@@ -240,6 +275,16 @@ class HttpUtils():
         return time.time() - starttime
 
     def put(self, verify=False):
+        """ Upload a file
+
+            verify : bool
+                Whether or not to verify the file size after transfer, default is
+                False (do not verify)
+
+            Returns
+            -------
+            float of the time the transfer took in seconds
+        """
         starttime = time.time()
         self.curl.setopt(pycurl.URL, self.dst)
         #self.curl.setopt(pycurl.UPLOAD, 1)
@@ -259,7 +304,30 @@ class HttpUtils():
 
 
     def copyfiles(self, filelist, tstats, secondsBetweenRetriesC=30, numTriesC=5, verify=False):
-        """ Copies files in given src,dst in filelist """
+        """ Copies files in given src,dst in filelist
+
+            Parameters
+            ----------
+            filelist : list
+                The files to transfer
+
+            tstats : dict
+                Data for tracking transfer statistics
+
+            secondsBetweenRetriesC : int
+                How many seconds between each retry
+
+            numtriesC : int
+                The number of times to retry a transfer, default is 5
+
+            verify : bool
+                Whether or not to verify the file size after transfer, default is
+                False (do not verify)
+
+            Returns
+            -------
+            tuple of the status ans file list
+        """
         num_copies_from_archive = 0
         num_copies_to_archive = 0
         total_copy_time_from_archive = 0.0
@@ -288,11 +356,11 @@ class HttpUtils():
 
                         # make the path
                         path = os.path.dirname(self.dst)
-                        if len(path) > 0 and not os.path.exists(path):
+                        if path and not os.path.exists(path):
                             miscutils.coremakedirs(path)
 
                         # getting some non-zero curl exit codes, double check path exists
-                        if len(path) > 0 and not os.path.exists(path):
+                        if path and not os.path.exists(path):
                             raise Exception("Error: path still missing after coremakedirs (%s)" % path)
                         copy_time = self.get(verify)
                         if tstats is not None:
@@ -347,16 +415,3 @@ class HttpUtils():
 
         HttpUtils.copyfiles_called += 1
         return (status, filelist)
-
-
-
-
-#if __name__ == "__main__":
-    # To run these unit tests first copy .desservices.ini_example to .desservices.ini
-    # in test_http_utils/, and set user and passwd. Then use this command:
-    #    python ./http_utils.py -v
-#    import doctest
-#    doctest.testmod()
-#    C = HttpUtils('test_http_utils/.desservices.ini', 'file-http')
-#    C.test_copyfiles()
-    # miscutils.fwdie("Test miscutils.fwdie", fmdefs.FM_EXIT_FAILURE)

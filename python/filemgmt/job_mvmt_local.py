@@ -1,9 +1,4 @@
-# $Id: job_mvmt_local.py 46423 2017-12-19 21:07:55Z friedel $
-# $Rev:: 46423                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2017-12-19 15:07:55 #$:  # Date of last commit.
-
-"""
+""" Move files locally
 """
 
 __version__ = "$Rev: 46423 $"
@@ -14,12 +9,30 @@ import despymisc.miscutils as miscutils
 import filemgmt.disk_utils_local as disk_utils_local
 
 class JobArchiveLocal(object):
-    """
+    """ Class for transferring files via cp
+
+        Parameters
+        ----------
+        homeinfo : dict
+            Dictionary of data on the sending machine
+
+        targetinfo : dict
+            Dictionary of data on the destination machine
+
+        mvmtinfo : unused
+
+        tstats : dict
+            Dictionary for tracking transfer statistics
+
+        config : dict
+            Dictionary of config values, default is None
     """
     # assumes home, target, and job dirs are read/write same machine
 
     @staticmethod
     def requested_config_vals():
+        """ Get the configuration values for this class
+        """
         return {}
 
     def __init__(self, homeinfo, targetinfo, mvmtinfo, tstats, config=None):
@@ -29,8 +42,18 @@ class JobArchiveLocal(object):
         self.config = config
         self.tstats = tstats
 
-
     def home2job(self, filelist):
+        """ Stage and transfer files from the archive to the job
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
         if miscutils.fwdebug_check(6, "JOBFILEMVMT_DEBUG"):
@@ -53,6 +76,17 @@ class JobArchiveLocal(object):
 
 
     def target2job(self, filelist):
+        """ Transfer files from the target archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
         if miscutils.fwdebug_check(6, "JOBFILEMVMT_DEBUG"):
@@ -71,6 +105,17 @@ class JobArchiveLocal(object):
 
 
     def job2target(self, filelist):
+        """ Transfer files from the job to the target archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
         if miscutils.fwdebug_check(6, "JOBFILEMVMT_DEBUG"):
@@ -89,6 +134,17 @@ class JobArchiveLocal(object):
 
 
     def job2home(self, filelist, verify=False):
+        """ Transfer files from the job to the home archive
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
         if miscutils.fwdebug_check(6, "JOBFILEMVMT_DEBUG"):

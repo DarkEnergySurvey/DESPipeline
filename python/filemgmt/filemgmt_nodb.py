@@ -17,11 +17,12 @@ import despymisc.miscutils as miscutils
 import filemgmt.filemgmt_defs as fmdefs
 
 class FileMgmtNoDB(object):
-    """
+    """ Class to manage files without a database
     """
 
     @staticmethod
     def requested_config_vals():
+        """ Get the config values ans whether they are required or not """
         return {'archive':'req', fmdefs.FILE_HEADER_INFO:'req', 'filetype_metadata':'req'}
 
     def __init__(self, config=None, argv=None):
@@ -29,22 +30,28 @@ class FileMgmtNoDB(object):
         self.argv = argv
 
     def get_list_filenames(self, args):
-        # args is an array of "command-line" args possibly with keys for query
-        # returns python list of filenames
-
-        raise Exception("NoDB filemgmt does not support this functionality")
-
-
-    def register_file_in_archive(self, filelist, args):
-        # with no db, don't need to register
-        miscutils.fwdebug_print("Nothing to do")
-        return {}
-
-
-    def file_has_metadata(self, filenames):
-        return filenames
+        """ Not used for this class """
+        pass
 
     def is_file_in_archive(self, fnames, filelist, args):
+        """ Determine if the requested file is in the archive
+
+            Parameters
+            ----------
+            fnames : list
+                List of files to check for
+
+            filelist : dict
+                Dict of the file info
+
+            args : dict
+                Dict of additional info
+
+            Returns
+            -------
+            list of booleans, one for each file, stating whether the file
+            is in the archive (True) ro not (False)
+        """
         archivename = args['archive']
         archivedict = self.config['archive'][archivename]
         archiveroot = os.path.realpath(archivedict['root'])
@@ -55,19 +62,53 @@ class FileMgmtNoDB(object):
                 in_archive.append(f)
         return in_archive
 
-    def save_file_info(self, artifacts, metadata, prov, execids):
-        pass
-
-    def ingest_file_metadata(self, filemeta):
-        pass
-
     def is_valid_filetype(self, ftype):
+        """ Determine if the file type is a valid one
+
+            Parameters
+            ----------
+            ftype : str
+                The file type to check
+
+            Returns
+            -------
+            bool, True if the file type is valid, False otherwise
+        """
         return ftype.lower() in self.config[fmdefs.FILETYPE_METADATA]
 
     def is_valid_archive(self, arname):
+        """ Determine if the archive is valid
+
+            Parameters
+            ----------
+            arname : str
+                The archive name to check
+
+            Returns
+            -------
+            bool, True if the archive is valid, False otherwise
+        """
         return arname.lower() in self.config['archive']
 
     def get_file_location(self, filelist, arname, compress_order=fmdefs.FM_PREFER_COMPRESSED):
+        """ Find the location of the given files
+
+            Parameters
+            ----------
+            filelist : list
+                List of the files to find
+
+            arname : str
+                Name of the archive to look in
+
+            compress_order : list
+                What order to look for the file in, compressed first or uncompressed first.
+                Default is filemgmt_defs.FM_PREFER_COMPRESSED
+
+            Returns
+            -------
+            dict of the files and their locations
+        """
         fileinfo = self.get_file_archive_info(filelist, arname, compress_order)
         rel_filenames = {}
         for f, finfo in fileinfo.items():
@@ -77,7 +118,24 @@ class FileMgmtNoDB(object):
 
     # compression = compressed_only, uncompressed_only, prefer uncompressed, prefer compressed, either (treated as prefer compressed)
     def get_file_archive_info(self, filelist, arname, compress_order=fmdefs.FM_PREFER_COMPRESSED):
+        """ Get the archive info for the given files
 
+            Parameters
+            ----------
+            filelist : list
+                List of the files to probe
+
+            arname : str
+                Name of the archive to look in
+
+            compress_order : list
+                What order to look for the file in, compressed first or uncompressed first.
+                Default is filemgmt_defs.FM_PREFER_COMPRESSED
+
+            Returns
+            -------
+            dict of the files and their locations
+        """
         # sanity checks
         if 'archive' not in self.config:
             miscutils.fwdie('Error: Missing archive section in config', 1)
@@ -99,7 +157,7 @@ class FileMgmtNoDB(object):
         root = self.config['archive'][arname]['root']
         root = root.rstrip("/")  # canonicalize - remove trailing / to ensure
 
-        for (dirpath, dirnames, filenames) in os.walk(root, followlinks=True):
+        for (dirpath, _, filenames) in os.walk(root, followlinks=True):
             for fname in filenames:
                 d = {}
                 (d['filename'], d['compression']) = miscutils.parse_fullname(fname, 3)
@@ -128,11 +186,26 @@ class FileMgmtNoDB(object):
         print "archiveinfo = ", archiveinfo
         return archiveinfo
 
-
-
     # compression = compressed_only, uncompressed_only, prefer uncompressed, prefer compressed, either (treated as prefer compressed)
     def get_file_archive_info_path(self, path, arname, compress_order=fmdefs.FM_PREFER_COMPRESSED):
+        """ Get the archive info of a directory
 
+            Parameters
+            ----------
+            path : str
+                The path to probe
+
+            arname : str
+                Name of the archive to look in
+
+            compress_order : list
+                What order to look for the file in, compressed first or uncompressed first.
+                Default is filemgmt_defs.FM_PREFER_COMPRESSED
+
+            Returns
+            -------
+            dict of the files and their info
+        """
         # sanity checks
         if 'archive' not in self.config:
             miscutils.fwdie('Error: Missing archive section in config', 1)
@@ -155,7 +228,7 @@ class FileMgmtNoDB(object):
         root = root.rstrip("/")  # canonicalize - remove trailing / to ensure
 
         list_by_name = {}
-        for (dirpath, dirnames, filenames) in os.walk(root + '/' + path):
+        for (dirpath, _, filenames) in os.walk(root + '/' + path):
             for fname in filenames:
                 d = {}
                 (d['filename'], d['compression']) = miscutils.parse_fullname(fname, 3)
@@ -184,20 +257,3 @@ class FileMgmtNoDB(object):
 
         print "archiveinfo = ", archiveinfo
         return archiveinfo
-
-    def register_file_data(self, ftype, fullnames, pfw_attempt_id, wgb_task_id,
-                           do_update, update_info=None, filepat=None):
-        results = {}
-        for fname in fullnames:
-            metadata = {}
-            fileinfo = {}
-            results[fname] = {'diskinfo': fileinfo, 'metadata': metadata}
-        return results
-
-
-    def ingest_provenance(self, prov, execids):
-        miscutils.fwdebug_print("Nothing to do")
-
-
-    def commit(self):
-        miscutils.fwdebug_print("Nothing to do")

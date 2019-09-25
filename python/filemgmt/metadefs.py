@@ -1,9 +1,6 @@
-#!/usr/bin/env python
-
-# $Id: metadefs.py 41008 2015-12-11 15:55:43Z mgower $
-# $Rev:: 41008                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2015-12-11 09:55:43 #$:  # Date of last commit.
+"""
+    Constants for the FileMgmt package
+"""
 
 WCL_META_SECT = 'filemeta'
 WCL_META_HEADERS = 'headers'

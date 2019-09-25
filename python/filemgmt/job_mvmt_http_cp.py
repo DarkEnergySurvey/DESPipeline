@@ -1,8 +1,3 @@
-# $Id: job_mvmt_http_cp.py 45126 2017-03-02 18:30:00Z friedel $
-# $Rev:: 45126                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2017-03-02 12:30:00 #$:  # Date of last commit.
-
 """
     Module to use when http for transfers between job and home archive, and
     cp between job and target archive
@@ -15,6 +10,7 @@ import copy
 import despymisc.miscutils as miscutils
 import filemgmt.http_utils as http_utils
 import filemgmt.disk_utils_local as disk_utils_local
+import filemgmt.filemgmt_defs as fmdefs
 
 DES_SERVICES = 'des_services'
 DES_HTTP_SECTION = 'des_http_section'
@@ -23,12 +19,27 @@ class JobArchiveHttpCp(object):
     """
         Use http for transfers between job and home archive, and
         cp between job and target archive
-    """
 
+        Parameters
+        ----------
+        homeinfo : dict
+            Dictionary of data on the sending machine
+
+        targetinfo : dict
+            Dictionary of data on the destination machine
+
+        mvmtinfo : unused
+
+        tstats : dict
+            Dictionary for tracking transfer statistics
+
+        config : dict
+            Dictionary of config values, default is None
+    """
     @staticmethod
     def requested_config_vals():
         """ Tell which values are req/opt for this object """
-        return {DES_SERVICES:'REQ', DES_HTTP_SECTION:'REQ'}
+        return {DES_SERVICES:fmdefs.REQUIRED, DES_HTTP_SECTION:fmdefs.REQUIRED}
 
     def __init__(self, homeinfo, targetinfo, mvmtinfo, tstats, config=None):
         """ initialize object """
@@ -45,7 +56,17 @@ class JobArchiveHttpCp(object):
                                        self.config[DES_HTTP_SECTION])
 
     def home2job(self, filelist):
-        """ From inside job, pull files from home archive to job scratch directory """
+        """ From inside job, pull files from home archive to job scratch directory
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
         if miscutils.fwdebug_check(6, "JOBFILEMVMT_DEBUG"):
@@ -67,7 +88,17 @@ class JobArchiveHttpCp(object):
         return results
 
     def target2job(self, filelist):
-        """ From inside job, pull files from target archive to job scratch directory """
+        """ From inside job, pull files from target archive to job scratch directory
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
         if miscutils.fwdebug_check(6, "JOBFILEMVMT_DEBUG"):
@@ -87,7 +118,17 @@ class JobArchiveHttpCp(object):
 
 
     def job2target(self, filelist):
-        """ From inside job, push files to target archive from job scratch directory """
+        """ From inside job, push files to target archive from job scratch directory
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
         if miscutils.fwdebug_check(6, "JOBFILEMVMT_DEBUG"):
@@ -106,7 +147,17 @@ class JobArchiveHttpCp(object):
         return results
 
     def job2home(self, filelist, verify=False):
-        """ From inside job, push files to home archive from job scratch directory """
+        """ From inside job, push files to home archive from job scratch directory
+
+            Parameters
+            ----------
+            filelist : dict
+                Dictionary containing the file names and path information
+
+            Returns
+            -------
+            dict of the results
+        """
         # if staging outside job, this function shouldn't be called
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))

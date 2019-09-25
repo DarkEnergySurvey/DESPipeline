@@ -22,8 +22,20 @@ import despymisc.miscutils as miscutils
 
 ######################################################################
 def get_md5sum_file(fullname, blksize=2**15):
-    """ Returns md5 checksum for given file """
+    """ Returns md5 checksum for given file
 
+        Parameters
+        ----------
+        fullname : str
+            The name of the file to do the md5sum of
+
+        blksize : int, long
+            The block size to read from the file, default is 2**15
+
+        Returns
+        -------
+        String of the md5sum
+    """
     md5 = hashlib.md5()
     with open(fullname, 'rb') as fhandle:
         for chunk in iter(lambda: fhandle.read(blksize), ''):
@@ -32,7 +44,19 @@ def get_md5sum_file(fullname, blksize=2**15):
 
 ######################################################################
 def get_file_disk_info(arg):
-    """ Returns information about files on disk from given list or path"""
+    """ Returns information about files on disk from given list or path
+
+        Parameters
+        ----------
+        arg : various
+            A list containing the path to probe, or a string of file to probe
+
+
+        Returns
+        -------
+        Dict containing the requested info.
+
+    """
 
     if isinstance(arg, list):
         return get_file_disk_info_list(arg)
@@ -45,6 +69,16 @@ def get_file_disk_info(arg):
 def get_single_file_disk_info(fname, save_md5sum=False, archive_root=None):
     """ Method to get disk info for a single file
 
+        Parameters
+        ----------
+        fname : str
+            The name of the file
+
+        save_md5sum : bool
+            Whether to calculate the md5sum (True) or no (False), default is False
+
+        archive_root : str
+            The archive root path to prepend to the output data, default is None
     """
     if miscutils.fwdebug_check(3, "DISK_UTILS_LOCAL_DEBUG"):
         miscutils.fwdebug_print("fname=%s, save_md5sum=%s, archive_root=%s" % \
@@ -56,12 +90,11 @@ def get_single_file_disk_info(fname, save_md5sum=False, archive_root=None):
     if miscutils.fwdebug_check(3, "DISK_UTILS_LOCAL_DEBUG"):
         miscutils.fwdebug_print("path=%s, filename=%s, compress=%s" % (path, filename, compress))
 
-    fdict = {
-        'filename' : filename,
-        'compression': compress,
-        'path': path,
-        'filesize': os.path.getsize(fname)
-        }
+    fdict = {'filename' : filename,
+             'compression': compress,
+             'path': path,
+             'filesize': os.path.getsize(fname)
+            }
 
     if save_md5sum:
         fdict['md5sum'] = get_md5sum_file(fname)
@@ -81,7 +114,20 @@ def get_single_file_disk_info(fname, save_md5sum=False, archive_root=None):
 
 ######################################################################
 def get_file_disk_info_list(filelist, save_md5sum=False):
-    """ Returns information about files on disk from given list """
+    """ Returns information about files on disk from given list
+
+        Parameters
+        ----------
+        filelist : list
+            List of files to probe
+
+        save_md5sum : bool
+            Whether to calculate the md5sum (True) or no (False), default is False
+
+        Returns
+        -------
+        Dict of the resulting data
+    """
 
     fileinfo = {}
     for fname in filelist:
@@ -92,13 +138,24 @@ def get_file_disk_info_list(filelist, save_md5sum=False):
 
     return fileinfo
 
-
-
 ######################################################################
 def get_file_disk_info_path(path, save_md5sum=False):
-    """ Returns information about files on disk from given path """
-    # if relative path, is treated relative to current directory
+    """ Returns information about files on disk from given path
 
+        Parameters
+        ----------
+        path : str
+            String of the path to probe
+
+        save_md5sum : bool
+            Whether to calculate the md5sum (True) or no (False), default is False
+
+        Returns
+        -------
+        Dict of the resulting data
+
+    """
+    # if relative path, is treated relative to current directory
     if not os.path.exists(path):
         miscutils.fwdie("Error:  path does not exist (%s)" % (path), 1)
 
@@ -112,7 +169,25 @@ def get_file_disk_info_path(path, save_md5sum=False):
 
 ######################################################################
 def copyfiles(filelist, tstats, verify=False):
-    """ Copies files in given src,dst in filelist """
+    """ Copies files in given src,dst in filelist
+
+        Parameters
+        ----------
+        filelist : list
+            List of files to transfer
+
+        tstats : object
+            Class for tracking the statistics of the transfer
+
+        verify : bool
+            Whether to verify the file transfer (if possible) (True) or
+            not (False), default is False
+
+        Returns
+        -------
+        Tuple containing the exit status of the transfer and a dictionary of
+        the transfer results
+    """
 
     status = 0
     for filename, fdict in filelist.items():
@@ -130,7 +205,7 @@ def copyfiles(filelist, tstats, verify=False):
                 if tstats is not None:
                     tstats.stat_beg_file(filename)
                 path = os.path.dirname(dst)
-                if len(path) > 0 and not os.path.exists(path):
+                if path and not os.path.exists(path):
                     miscutils.coremakedirs(path)
                 shutil.copy(src, dst)
                 if tstats is not None:
@@ -151,6 +226,10 @@ def copyfiles(filelist, tstats, verify=False):
 def remove_file_if_exists(filename):
     """ Method to remove a single file if it exisits
 
+        Parameters
+        ---------
+        filename : str
+            The name of the file to delete
     """
     try:
         os.remove(filename)
@@ -203,107 +282,28 @@ def get_files_from_disk(relpath, archive_root, check_md5sum=False, debug=False):
         print "Getting file information from disk: END (%s secs)" % (end_time - start_time)
     return files_from_disk, duplicates
 
-####################################################################
-def compare_db_disk(files_from_db, files_from_disk, duplicates, check_md5sum, debug=False, archive_root="",
-                    pfwid=None):
-    """ Compare file info from DB to info from disk
+def del_files_from_disk(path):
+    """ Delete files from disk
 
         Parameters
         ----------
-        file_from_db : dict
-            Dicitonary containing the file info from the database
-
-        files_from_disk : dict
-            Dictionary containing the file info from disk
-
-        check_md5sum : bool
-            Whether or not to report the md5sum comparision
-
-        check_filesize : bool
-            Whether or not to report the filesize comparison
-
-        debug : bool
-            Whenther or not to report debugging info
-            Default: False
-
-        archive_root : str
-            The archive root path
-            Default : False
-
-        Returns
-        -------
-        None
+        path : str
+            The path to delete
     """
-
-    start_time = time.time()
-    if debug:
-        print "Comparing file information: BEG"
-    comparison_info = {'equal': [],
-                       'dbonly': [],
-                       'diskonly': [],
-                       'both': [],
-                       'path': [],
-                       'filesize': [],
-                       'duplicates': [], # has db entry
-                       'pathdup' : [],    # has no db entry
-                       'pfwid' : pfwid
-                      }
-    if check_md5sum:
-        comparison_info['md5sum'] = []
-
-    #if check_filesize:
-    #    comparison_info['filesize'] = []
-
-    allfiles = set(files_from_db).union(set(files_from_disk))
-
-    for fname in allfiles:
-        if fname in files_from_db:
-            if fname in files_from_disk:
-                comparison_info['both'].append(fname)
-                fdisk = files_from_disk[fname]
-                fdb = files_from_db[fname]
-                if fname in duplicates:
-                    comparison_info['duplicates'].append(fname)
-                if fdisk['relpath'] == fdb['path']:
-                    if fdisk['filesize'] == fdb['filesize']:
-                        if check_md5sum:
-                            if fdisk['md5sum'] == fdb['md5sum']:
-                                comparison_info['equal'].append(fname)
-                            else:
-                                comparison_info['md5sum'].append(fname)
-                        else:
-                            comparison_info['equal'].append(fname)
-                    else:
-                        comparison_info['filesize'].append(fname)
-                else:
-                    try:
-                        data = get_single_file_disk_info(fdb['path'] + '/' + fname, check_md5sum, archive_root)
-                        if fname not in duplicates:
-                            duplicates[fname] = []
-                        duplicates[fname].append(copy.deepcopy(files_from_disk[fname]))
-                        files_from_disk[fname] = data
-                        comparison_info['duplicates'].append(fname)
-                    except:
-                        comparison_info['path'].append(fname)
-            else:
-                comparison_info['dbonly'].append(fname)
-        else:
-            if fname in duplicates:
-                comparison_info['pathdup'].append(fname)
-            comparison_info['diskonly'].append(fname)
-
-    end_time = time.time()
-    if debug:
-        print "Comparing file information: END (%s secs)" % (end_time - start_time)
-    return comparison_info
-
-def del_files_from_disk(path):
-    """ Delete files from disk """
-
     shutil.rmtree(path) #,ignore_errors=True)
 
 def del_part_files_from_disk(files, archive_root):
-    """ delete specific files from disk """
+    """ delete specific files from disk
+
+        Parameters
+        ----------
+        files : dict
+            The files to delete
+
+        archive_root : str
+            The path to prepend to the files before deleting
+
+    """
     good = []
     for key, value in files.iteritems():
         try:

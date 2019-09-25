@@ -1,10 +1,3 @@
-#!/usr/bin/env python
-
-# $Id: ftmgmt_generic.py 46423 2017-12-19 21:07:55Z friedel $
-# $Rev:: 46423                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2017-12-19 15:07:55 #$:  # Date of last commit.
-
 """
 Generic filetype management class used to do filetype specific tasks
      such as metadata and content ingestion
@@ -15,88 +8,46 @@ __version__ = "$Rev: 46423 $"
 from collections import OrderedDict
 import copy
 import re
-#import time
 
 import despymisc.miscutils as miscutils
-import despydmdb.dmdb_defs as dmdbdefs
-
 
 class FtMgmtGeneric(object):
-    """  Base/generic class for managing a filetype (get metadata, update metadata, etc) """
+    """  Base/generic class for managing a filetype (get metadata, update metadata, etc)
 
+        Parameters
+        ----------
+        filetype : str
+            The filetype being worked with
+
+        config : dict
+            Dictionary of config values
+
+        filepat : str
+            File pattern naming string, default is None
+    """
     ######################################################################
-    def __init__(self, filetype, dbh, config, filepat=None):
+    def __init__(self, filetype, config, filepat=None):
         """ Initialize object """
         # config must have filetype_metadata and file_header_info
         self.filetype = filetype
-        self.dbh = dbh
         self.config = config
         self.filepat = filepat
 
-
-
-    ######################################################################
-    def has_metadata_ingested(self, listfullnames):
-        """ Check if file has row in metadata table """
-
-        assert isinstance(listfullnames, list)
-
-        # assume uncompressed and compressed files have same metadata
-        # choosing either doesn't matter
-        byfilename = {}
-        for fname in listfullnames:
-            filename = miscutils.parse_fullname(fname, miscutils.CU_PARSE_FILENAME)
-            byfilename[filename] = fname
-
-        #self.dbh.empty_gtt(dmdbdefs.DB_GTT_FILENAME)
-        #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
-        #    miscutils.fwdebug_print("Loading filename_gtt with: %s" % byfilename.keys())
-        self.dbh.load_filename_gtt(byfilename.keys())
-
-        metadata_table = self.config['filetype_metadata'][self.filetype]['metadata_table']
-
-        if metadata_table.lower() == 'genfile':
-            metadata_table = 'desfile'
-
-        dbq = "select m.filename from %s m, %s g where m.filename=g.filename" % \
-                 (metadata_table, dmdbdefs.DB_GTT_FILENAME)
-        curs = self.dbh.cursor()
-        #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
-        #    miscutils.fwdebug_print("Metadata check query: %s" % dbq)
-        curs.execute(dbq)
-
-        results = {}
-        for row in curs:
-            results[byfilename[row[0]]] = True
-
-        for fname in listfullnames:
-            if fname not in results:
-                results[fname] = False
-
-        #self.dbh.empty_gtt(dmdbdefs.DB_GTT_FILENAME)
-
-        #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
-        #    miscutils.fwdebug_print("Metadata check results: %s" % results)
-        return results
-
-    ######################################################################
-    def has_contents_ingested(self, listfullnames):
-        """ Check if file has contents ingested """
-        #starttime = time.time()
-        assert isinstance(listfullnames, list)
-
-        # 0 contents to ingest, so true
-        results = {}
-        for fname in listfullnames:
-            results[fname] = True
-        #print "   HCI-gen:  %.3f" % (time.time()-starttime)
-
-        return results
-
     ######################################################################
     def check_valid(self, listfullnames):
-        """ Check if a valid file of the filetype """
+        #pylint: disable=no-self-use
+        """ Check if files of of the current filetype
 
+            Parameters
+            ----------
+            listfullmanes : list
+                The files to check
+
+            Returns
+            -------
+            dict of the filenames as keys and a bool as to whther they are of
+            the current file type (True) or not (False)
+        """
         assert isinstance(listfullnames, list)
 
         results = {}
@@ -104,25 +55,35 @@ class FtMgmtGeneric(object):
             results[fname] = True
 
         return results
-
-    ######################################################################
-    def ingest_contents(self, listfullnames, **kwargs):
-        """ Ingest certain content into a non-metadata table """
-        pass
 
     ######################################################################
     def perform_metadata_tasks(self, fullname, do_update, update_info):
-        """ Read metadata from file, updating file values """
+        #pylint: disable=unused-argument
+        """ Read metadata from file, updating file values
+
+            Parameters
+            ----------
+            fullname : str
+                The name of the file to gather data from
+
+            do_update : bool
+                Whether to update the metadata of the file from update_info
+                (Not used in this class, but is in sub classes)
+
+            update_info : dict
+                The data to update the header with (Not used in this class,
+                but is in sub classes)
+
+            Returns
+            -------
+            dict containing the metadata
+        """
 
         #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
         #    miscutils.fwdebug_print("INFO: beg")
 
         # read metadata and call any special calc functions
         metadata = self._gather_metadata_file(fullname)
-
-        #if do_update:
-        #    miscutils.fwdebug_print("WARN (%s): skipping file metadata update." % \
-                                    self.__class__.__name__)
 
         #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
         #    miscutils.fwdebug_print("INFO: end")
@@ -131,7 +92,21 @@ class FtMgmtGeneric(object):
 
     ######################################################################
     def _gather_metadata_file(self, fullname, **kwargs):
-        """ Gather metadata for a single file """
+        #pylint: disable=unused-argument
+        """ Gather metadata for a single file
+
+            Parameters
+            ----------
+            fullname : str
+                The name of the file to gather data from
+
+            kwargs : used by subclasses
+
+            Returns
+            -------
+            dict containing the metadata
+
+        """
 
         #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
         #    miscutils.fwdebug_print("INFO: beg  file=%s" % (fullname))
@@ -178,7 +153,20 @@ class FtMgmtGeneric(object):
 
     ######################################################################
     def _gather_metadata_from_config(self, fullname, metakeys):
-        """ Get values from config """
+        """ Get values from config
+
+            Parameters
+            ----------
+            fullname : str
+                The name of the file to gather data about
+
+            metakeys : list
+                List of keys to look for
+
+            Returns
+            -------
+            dict containing the metadata
+        """
         metadata = OrderedDict()
 
         for wclkey in metakeys:
@@ -202,7 +190,20 @@ class FtMgmtGeneric(object):
 
     ######################################################################
     def _gather_metadata_from_filename(self, fullname, metakeys):
-        """ Parse filename using given filepat """
+        """ Parse filename using given filepat
+
+                        Parameters
+            ----------
+            fullname : str
+                The name of the file to gather data about
+
+            metakeys : list
+                List of keys to look for
+
+            Returns
+            -------
+            dict containing the metadata
+        """
 
         if self.filepat is None:
             raise TypeError("None filepat for filetype %s" % self.filetype)
@@ -215,14 +216,14 @@ class FtMgmtGeneric(object):
         while m:
             #print m.group(1), m.group(2)
             if m.group(1) is not None:
-                m2 = re.search('([^:]+):(\d+)', m.group(1))
+                m2 = re.search(r'([^:]+):(\d+)', m.group(1))
                 #print m2.group(1), m2.group(2)
                 listvar.append(m2.group(1))
 
                 # create a pattern that will remove the 0-padding
-                newfilepat = re.sub(r"\${%s}" % (m.group(1)), '(\d{%s})' % m2.group(2), newfilepat)
+                newfilepat = re.sub(r"\${%s}" % (m.group(1)), r'(\d{%s})' % m2.group(2), newfilepat)
             else:
-                newfilepat = re.sub(r"\${%s}" % (m.group(2)), '(\S+)', newfilepat)
+                newfilepat = re.sub(r"\${%s}" % (m.group(2)), r'(\S+)', newfilepat)
                 listvar.append(m.group(2))
 
             m = re.search(varpat, newfilepat)
@@ -247,8 +248,7 @@ class FtMgmtGeneric(object):
 
         # only save values parsed from filename that were requested per metakeys
         mddict = {}
-        for cnt in range(0, len(listvar)):
-            key = listvar[cnt]
+        for cnt, key in enumerate(listvar):
             if key in metakeys:
                 #if miscutils.fwdebug_check(6, 'FTMGMT_DEBUG'):
                 #    miscutils.fwdebug_print("INFO: saving as metadata key = %s, cnt = %s" % (key, cnt))

@@ -13,8 +13,8 @@ Generic filetype management class used to do filetype specific tasks
 __version__ = "$Rev: 47020 $"
 
 from collections import OrderedDict
-import pyfits
 import time
+import pyfits
 
 from filemgmt.ftmgmt_generic import FtMgmtGeneric
 import despymisc.miscutils as miscutils
@@ -22,17 +22,45 @@ import despyfitsutils.fits_special_metadata as spmeta
 import despyfitsutils.fitsutils as fitsutils
 
 class FtMgmtGenFits(FtMgmtGeneric):
-    """  Base/generic class for managing a filetype (get metadata, update metadata, etc) """
+    """  Base/generic class for managing a filetype (get metadata, update metadata, etc)
+
+        Parameters
+        ----------
+        filetype : str
+            The filetype being worked with
+
+        config : dict
+            Dictionary of config values
+
+        filepat : str
+            File pattern naming string, default is None
+    """
 
     ######################################################################
-    def __init__(self, filetype, dbh, config, filepat=None):
+    def __init__(self, filetype, config, filepat=None):
         """ Initialize object """
         # config must have filetype_metadata and file_header_info
-        FtMgmtGeneric.__init__(self, filetype, dbh, config, filepat)
+        FtMgmtGeneric.__init__(self, filetype, config, filepat)
 
     ######################################################################
     def perform_metadata_tasks(self, fullname, do_update, update_info):
-        """ Read metadata from file, updating file values """
+        """ Read metadata from file, updating file values
+
+            Parameters
+            ----------
+            fullname : str
+                The name of the file to gather data from
+
+            do_update : bool
+                Whether to update the metadata of the file from update_info
+
+            update_info : dict
+                The data to update the header with
+
+            Returns
+            -------
+            dict containing the metadata
+        """
         starttime = time.time()
         if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
             miscutils.fwdebug_print("INFO: beg")
@@ -65,7 +93,20 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
     ######################################################################
     def _gather_metadata_file(self, fullname, **kwargs):
-        """ Gather metadata for a single file """
+        """ Gather metadata for a single file
+
+           Parameters
+            ----------
+            fullname : str
+                The name of the file to gather data from
+
+            kwargs : dict
+                Dictionary containing additional info
+
+            Returns
+            -------
+            dict containing the metadata
+        """
 
         if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
             miscutils.fwdebug_print("INFO: file=%s" % (fullname))
@@ -134,7 +175,20 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
     ######################################################################
     def _get_update_values_metadata(self, metadata, datadefs):
-        """ Put metadata values for update in data structure easy to use """
+        """ Put metadata values for update in data structure easy to use
+
+            Parameters
+            ----------
+            metadata : dict
+                Dictionary of the metadata
+
+            datadefs : dict
+                Dictionary of additional definitions
+
+            Returns
+            -------
+            OrderedDict of the update info
+        """
 
         metadefs = self.config['filetype_metadata'][self.filetype]
         update_info = OrderedDict()
@@ -161,9 +215,9 @@ class FtMgmtGenFits(FtMgmtGeneric):
                                         miscutils.fwdebug_print("WARN: %s's filename too long for DESFNAME: %s" % \
                                             (metadata['filename'], len(metadata['filename'])))
                                         fitscomment = fitscomment[:min(len(fitscomment), 80 - len(metadata['filename']) - 16)]
-                                     
+
                                 update_info[0]['DESFNAME'] = (metadata['filename'], fitscomment, 'str')
-                                     
+
                             elif key != 'filetype' and key != 'pfw_attempt_id':
                                 if key in metadata:
                                     uvalue = metadata[key]
@@ -179,7 +233,17 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
     ######################################################################
     def _get_file_header_key_info(self, key):
-        """ From definitions of file header keys, return comment and fits data type """
+        """ From definitions of file header keys, return comment and fits data type
+
+            Parameters
+            ----------
+            key : str
+                The key to look for in the header
+
+            Returns
+            -------
+            tuple of the description and data type
+        """
 
         file_header_info = self.config['file_header']
         ucomment = None
@@ -199,7 +263,17 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
     ######################################################################
     def _get_update_values_explicit(self, update_info):
-        """ include values explicitly set by operator/framework """
+        """ include values explicitly set by operator/framework
+
+            Parameters
+            ----------
+            update_info : dict
+                Dictionary of the updated header values
+
+            Returns
+            -------
+            dict of the updated header values with additional components
+        """
 
         upinfo2 = OrderedDict()
 
@@ -228,12 +302,29 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
         return upinfo2
 
-
-
     ######################################################################
     @classmethod
     def _gather_metadata_from_header(cls, fullname, hdulist, hdname, metakeys):
-        """ Get values from config """
+        """ Get values from config
+
+            Parameters
+            ----------
+            fullname : str
+                The name of the file
+
+            hdulist : list
+                List of the HDU's
+
+            hdname : str
+                The name of the header to look in
+
+            metakeys : dict
+                Dictionary of the keys to look for
+
+            Returns
+            -------
+            tuple of the metadata and data definitions
+        """
 
         metadata = OrderedDict()
         datadef = OrderedDict()
@@ -252,17 +343,22 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
     ######################################################################
     def _update_headers_file(self, hdulist, metadata, datadefs, update_info):
-        """ Update headers in file """
+        """ Update headers in file
 
-        #update_info = hdrupd section of input wcl, dictionary of dictionary
-        #<hdrupd>
-        #    <set_0>
-        #        headers = 0, 1
-        #        key1 = value1/descr/fits data type
-        #        key2 = value2/descr/fits data type
-        #    </set_0>
-        #</hdrupd>
+            Parameters
+            ----------
+            hdulist : list
+                List of HDU's
 
+            metadata : dict
+                Dictionary of metadata to use to update the headers
+
+            datadefs : dict
+                Dictionary of the data definitions for the metadata
+
+            update_info : dict
+                The data used in the update
+        """
         all_update_info = self._get_update_values_metadata(metadata, datadefs)
         wcl_update_info = self._get_update_values_explicit(update_info)
         all_update_info.update(wcl_update_info)
@@ -286,7 +382,7 @@ class FtMgmtGenFits(FtMgmtGeneric):
                 elif udatatype is None:
                     _, udatatype = self._get_file_header_key_info(key)
 
-                if type(udatatype) is str and type(uval) is str and udatatype != 'str':
+                if isinstance(udatatype, str) and isinstance(uval, str) and udatatype != 'str':
                     udatatype = udatatype.lower()
                     #global __builtins__
                     #uval = getattr(__builtins__, udatatype)(uval)

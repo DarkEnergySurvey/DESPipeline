@@ -12,7 +12,6 @@ __version__ = "$Rev: 42792 $"
 import os
 import sys
 import shutil
-import subprocess
 import re
 import traceback
 import time
@@ -20,51 +19,28 @@ import time
 import despyserviceaccess.serviceaccess as serviceaccess
 import despymisc.miscutils as miscutils
 import filemgmt.filemgmt_defs as fmdefs
-import deswebdav as webdav
 import filemgmt.disk_utils_local as dul
+import deswebdav as webdav
 
-def http_code_str(hcode):
-    codestr = "Unmapped http_code (%s)" % hcode
-    code2str = {'200': 'Success/Ok',
-                '201': 'Success/Created',
-                '204': 'No content (unknown status)',
-                '301': 'Directory already existed',
-                '304': 'Not modified',
-                '400': 'Bad Request (check command syntax)',
-                '401': 'Unauthorized (check username/password)',
-                '403': 'Forbidden (check url, check perms)',
-                '404': 'Not Found (check url exists and is readable)',
-                '405': 'Method not allowed',
-                '429': 'Too Many Requests (check transfer throttling)',
-                '500': 'Internal Server Error', 
-                '501': 'Not implemented/understood',
-                '507': 'Insufficient storage (check disk space)'}
+class EwdUtils(object):
+    """ Class to handle data transfers. Uses easywebdav for the connection and transfers.
 
+        Parameters
+        ----------
+        des_services : str
+            Name of the services file
 
-    # convert given code to str (converting to int can fail)
-    if str(hcode) in code2str:
-        codestr = code2str[str(hcode)]
-    return codestr
+        des_http_section : str
+            Name of the section in the services file which specified the connection information
 
-class EwdUtils():
+        destination : str
+            Name or IP of the destination host.
+
+       >>> C = EwdUtils('test_http_utils/.desservices.ini', 'file-http', 'des.cosmology.edu')
+    """
     copyfiles_called = 0
 
     def __init__(self, des_services, des_http_section, destination):
-        """Class to handle data transfers. Uses easywebdav for the connection and transfers.
-
-           Parameters
-           ---------
-           des_services : str
-               Name of the services file
-
-           des_http_section : str
-               Name of the section in the services file which specified the connection information
-
-           destination : str
-               Name or IP of the destination host.
-
-           >>> C = EwdUtils('test_http_utils/.desservices.ini', 'file-http', 'des.cosmology.edu')
-        """
         try:
             # Parse the .desservices.ini file:
             self.auth_params = serviceaccess.parse(des_services, des_http_section)
@@ -76,8 +52,9 @@ class EwdUtils():
         self.existing_directories = set()
 
     def check_url(self, P):
+        #pylint: disable=no-self-use
         """ See if P is a url.
-            
+
             Parameters
             ----------
             P : str
@@ -136,12 +113,12 @@ class EwdUtils():
         starttime = time.time()
 
         # check to see which way the file is going (upload or download)
-        (temp, upl) = self.check_url(dst)
-        (temp, dnl) = self.check_url(src)
+        (_, upl) = self.check_url(dst)
+        (_, dnl) = self.check_url(src)
 
         # if downloading
         if dnl:
-            loc = src.find("/",10)
+            loc = src.find("/", 10)
             sfile = src[loc:]
             dfile = dst
             mode = "download"
@@ -159,7 +136,7 @@ class EwdUtils():
             down = True
         # if uploading
         elif upl:
-            loc = dst.find("/",10)
+            loc = dst.find("/", 10)
             dfile = dst[loc:]
             sfile = src
             mode = "upload"
@@ -231,7 +208,7 @@ class EwdUtils():
                     break
             # if this was the last attempt then do diagnostics
             if x == numTries - 1:
-                # run some diagnostics                                                                                                                                                                                                        
+                # run some diagnostics
                 miscutils.fwdebug_print("*" * 75)
                 miscutils.fwdebug_print("WEBDAV %s FAILURE" % mode.upper())
                 miscutils.fwdebug_print("webdav %s: %s" % (mode, sfile))
@@ -241,7 +218,7 @@ class EwdUtils():
                 print "\nDiagnostics:"
                 print "Directory info"
                 sys.stdout.flush()
-                os.system("pwd; find . -exec ls -ld {} \;")
+                os.system(r"pwd; find . -exec ls -ld {} \;")
                 print "\nFile system disk space usage"
                 sys.stdout.flush()
                 os.system("df -h .")
@@ -258,8 +235,8 @@ class EwdUtils():
                         sys.stdout.flush()
                         os.system("traceroute %s" % hname)
                     except:   # print exception but continue
-                        (type, value, trback) = sys.exc_info()
-                        traceback.print_exception(type, value, trback, file=sys.stdout)
+                        (_type, value, trback) = sys.exc_info()
+                        traceback.print_exception(_type, value, trback, file=sys.stdout)
                         print "\n\nIgnoring remote diagnostics exception.   Continuing.\n"
                 else:
                     print "Couldn't find url in source file:", src
@@ -278,6 +255,7 @@ class EwdUtils():
 
         if not isTest:
             return time.time()-starttime
+        return None
 
     def create_http_intermediate_dirs(self, f):
         """ Create all directories that are valid prefixes of the URL *f*.
@@ -299,14 +277,14 @@ class EwdUtils():
 
     def copyfiles(self, filelist, tstats, secondsBetweenRetriesC=30, numTriesC=5, verify=None):
         """ Copies files in given src,dst in filelist
-        
+
             Parameters
             ----------
             filelist : dict
                 Dictionary of the files to transfer along with their peoperties
 
             tstats : object
-              
+
             secondsBetweenRetriesC : int
                 How long to wait between retries of the transfer in seconds
                 Default: 30
@@ -336,10 +314,10 @@ class EwdUtils():
                 fsize = fdict['filesize']
             try:
                 (src, isurl_src) = self.check_url(fdict['src'])
-                (dst,isurl_dst) = self.check_url(fdict['dst'])
+                (dst, isurl_dst) = self.check_url(fdict['dst'])
                 if (isurl_src and isurl_dst) or (not isurl_src and not isurl_dst):
                     miscutils.fwdie("Exactly one of isurl_src and isurl_dst has to be true (values: %s %s %s %s)"
-                          % (isurl_src, src, isurl_dst, dst), fmdefs.FM_EXIT_FAILURE)
+                                    % (isurl_src, src, isurl_dst, dst), fmdefs.FM_EXIT_FAILURE)
                 copy_time = None
                 # if local file and file doesn't already exist
                 if not isurl_dst and not os.path.exists(dst):
@@ -348,10 +326,10 @@ class EwdUtils():
 
                     # make the path
                     path = os.path.dirname(dst)
-                    if len(path) > 0 and not os.path.exists(path):
+                    if path and not os.path.exists(path):
                         miscutils.coremakedirs(path)
                     # getting some non-zero curl exit codes, double check path exists
-                    if len(path) > 0 and not os.path.exists(path):
+                    if path and not os.path.exists(path):
                         raise Exception("Error: path still missing after coremakedirs (%s)" % path)
                     copy_time = self.move_file(src, dst, secondsBetweenRetries=secondsBetweenRetriesC, numTries=numTriesC, verify=verify, fdict=fdict)
                     if tstats is not None:
@@ -439,7 +417,8 @@ class EwdUtils():
                                                'src': 'http://desar2.cosmology.illinois.edu/DESTesting/bar/arggdfsbqwr.txt'}}
 
         shutil.rmtree('test_dh', True)
-        with open("testfile_dh.txt", "w") as f: f.write("hello, world")
+        with open("testfile_dh.txt", "w") as f:
+            f.write("hello, world")
 
         self.copyfiles(test_filelist1, None)
         self.copyfiles(test_filelist2, None)
@@ -458,7 +437,7 @@ class EwdUtils():
         self.webdav.delete("DESTesting/bar/testfile_dh3.txt")
         self.webdav.delete("DESTesting/bar/")
 
-        (status, filelist5_out) = self.copyfiles(test_filelist5, None, secondsBetweenRetriesC=1, numTriesC=2)
+        (_, filelist5_out) = self.copyfiles(test_filelist5, None, secondsBetweenRetriesC=1, numTriesC=2)
         if filelist5_out['testfile_dh5.txt'].has_key('err') and filelist5_out['testfile_dh5.txt']['err'] == 'File operation failed with return code 22, http status 404.':
             print "Test of failed GET seems ok."
         else:
