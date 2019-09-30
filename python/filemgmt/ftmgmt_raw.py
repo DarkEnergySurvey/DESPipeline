@@ -9,7 +9,8 @@ import os
 from datetime import datetime
 import pyfits
 
-from filemgmt.ftmgmt_genfits import FtMgmtGenFits
+from ftmgmt_genfits import FtMgmtGenFits
+import decam_keywords
 import despymisc.miscutils as miscutils
 import despymisc.create_special_metadata as spmeta
 
@@ -90,30 +91,13 @@ class FtMgmtRaw(FtMgmtGenFits):
         for fname in listfullnames:
             results[fname] = False
 
-        keyfile = None
-        if 'raw_keywords_file' in self.config:
-            keyfile = self.config['raw_keywords_file']
-        elif 'FILEMGMT_DIR' in os.environ:
-            keyfile = '%s/etc/decam_src_keywords.txt' % os.environ['FILEMGMT_DIR']
+        keywords = {'pri':{}, 'ext':{}}
+        for keyname, value in decam_keywords.keywords.items():
+            keywords['pri'][keyname] = value[0].upper()
+            keywords['ext'][keyname] = value[1].upper()
 
-        miscutils.fwdebug_print("keyfile = %s" % keyfile)
-        if keyfile is not None and os.path.exists(keyfile):
-            keywords = {'pri':{}, 'ext':{}}
-            with open(keyfile, 'r') as keyfh:
-                for line in keyfh:
-                    line = line.upper()
-                    [keyname, pri, ext] = miscutils.fwsplit(line, ',')[0:3]
-                    if pri != 'Y' and pri != 'N' and pri != 'R':
-                        raise ValueError('Invalid primary entry in keyword file (%s)' % line)
-                    if ext != 'Y' and ext != 'N' and ext != 'R':
-                        raise ValueError('Invalid extenstion entry in keyword file (%s)' % line)
-                    keywords['pri'][keyname] = pri
-                    keywords['ext'][keyname] = ext
-
-            for fname in listfullnames:
-                results[fname] = check_single_valid(keywords, fname, 0)
-        else:
-            raise OSError('Error:  Could not find keywords file')
+        for fname in listfullnames:
+            results[fname] = check_single_valid(keywords, fname, 0)
 
         return results
 
