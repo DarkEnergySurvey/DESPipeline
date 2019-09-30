@@ -17,9 +17,6 @@ import shlex
 import time
 
 import despymisc.miscutils as miscutils
-import processingfw.pfwdefs as pfwdefs
-import qcframework.Messaging as Messaging
-
 
 #######################################################################
 def pad_jobnum(jobnum):
@@ -216,25 +213,18 @@ def get_version(execname, execdefs):
 
 
 ############################################################################
-def run_cmd_qcf(cmd, logfilename, wid, execnames, use_qcf=False, dbh=None, pfwattid=0, patterns={}, threaded=False):
+def run_cmd_qcf(cmd, logfilename, execnames):
     """ Execute the command piping stdout/stderr to log and QCF """
     bufsize = 1024 * 10
-    lasttime = time.time()
     if miscutils.fwdebug_check(3, "PFWUTILS_DEBUG"):
         miscutils.fwdebug_print("BEG")
         miscutils.fwdebug_print("working dir = %s" % (os.getcwd()))
         miscutils.fwdebug_print("cmd = %s" % cmd)
         miscutils.fwdebug_print("logfilename = %s" % logfilename)
-        miscutils.fwdebug_print("wid = %s" % wid)
         miscutils.fwdebug_print("execnames = %s" % execnames)
-        miscutils.fwdebug_print("use_qcf = %s" % use_qcf)
-
-    use_qcf = miscutils.convertBool(use_qcf)
 
     sys.stdout.flush()
     try:
-        messaging = Messaging.Messaging(logfilename, execnames, pfwattid=pfwattid, taskid=wid,
-                                        dbh=dbh, usedb=use_qcf, qcf_patterns=patterns, threaded=threaded)
         process_wrap = subprocess.Popen(shlex.split(cmd),
                                         shell=False,
                                         stdout=subprocess.PIPE,
@@ -252,15 +242,8 @@ def run_cmd_qcf(cmd, logfilename, wid, execnames, use_qcf=False, dbh=None, pfwat
 
     try:
         buf = os.read(process_wrap.stdout.fileno(), bufsize)
-        while process_wrap.poll() is None or len(buf) != 0:
-            if dbh is not None:
-                now = time.time()
-                if now - lasttime > 30.*60.:
-                    if not dbh.ping():
-                        dbh.reconnect()
-                    lasttime = now
-            messaging.write(buf)
-            #print buf
+        while process_wrap.poll() is None or buf:
+            print buf
             buf = os.read(process_wrap.stdout.fileno(), bufsize)
             # brief sleep
             if process_wrap.poll() is None:
@@ -380,19 +363,8 @@ def should_compress_file(mastercompress, filecompress, exitcode):
 
 
 ######################################################################
-def pfw_dynam_load_class(pfw_dbh, wcl, parent_tid, attempt_task_id,
-                         label, classname, extra_info):
+def pfw_dynam_load_class(wcl, label, classname, extra_info):
     """ Dynamically load a class save timing info in task table """
-
-    #task_id = -1
-    #if pfw_dbh is not None:
-    #    task_id = pfw_dbh.create_task(name='dynclass',
-    #                                  info_table=None,
-    #                                  parent_task_id=parent_tid,
-    #                                  root_task_id=attempt_task_id,
-    #                                  label=label,
-    #                                  do_begin=True,
-    #                                  do_commit=True)
 
     the_class_obj = None
     try:
@@ -407,8 +379,6 @@ def pfw_dynam_load_class(pfw_dbh, wcl, parent_tid, attempt_task_id,
         (extype, exvalue, _) = sys.exc_info()
         msg = "Error: creating %s object - %s - %s" % (label, extype, exvalue)
         print "\n%s" % msg
-        if pfw_dbh is not None:
-            Messaging.pfw_message(pfw_dbh, wcl['pfw_attempt_id'], parent_tid, msg, pfwdefs.PFWDB_MSG_ERROR)
         raise
 
     #if pfw_dbh is not None:

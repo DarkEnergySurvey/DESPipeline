@@ -1,8 +1,3 @@
-# $Id: pfwdefs.py 48056 2019-01-08 19:57:20Z friedel $
-# $Rev:: 48056                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2019-01-08 13:57:20 #$:  # Date of last commit.
-
 """ Constants used across various files to make changes easier """
 
 # when changing values, check if change also needed in $PROCESSINGFW_DIR/etc/pfwconfig.des
@@ -37,7 +32,7 @@ HOME_ARCHIVE = 'home_archive'
 USE_HOME_ARCHIVE_INPUT = 'use_home_archive_input'
 USE_HOME_ARCHIVE_OUTPUT = 'use_home_archive_output'
 VALID_HOME_ARCHIVE_INPUT = ['target_archive', 'wrapper', 'all', 'never']
-VALID_HOME_ARCHIVE_OUTPUT = ['wrapper', 'job', 'block', 'run', 'never']
+VALID_HOME_ARCHIVE_OUTPUT = ['wrapper', 'job', 'run', 'never']
 
 
 TARGET_ARCHIVE = 'target_archive'
@@ -81,7 +76,6 @@ DATA_DEPENDS = 'depends'
 # top level section names
 SW_FILEPATSECT = 'filename_pattern'
 DIRPATSECT = 'directory_pattern'
-SW_BLOCKSECT = 'block'
 SW_MODULESECT = 'module'
 SW_ARCHIVESECT = 'archive'
 SW_SITESECT = 'site'
@@ -102,7 +96,6 @@ SW_EXECNAME = 'execname'
 SW_WRAPPERNAME = 'wrappername'
 SW_CMDARGS = 'cmdline'
 SW_FILEPAT = 'filepat'
-SW_BLOCKLIST = 'blocklist'
 SW_MODULELIST = 'modulelist'
 SW_LISTSECT = 'list'
 SW_FILESECT = 'file'
@@ -127,21 +120,6 @@ IW_EXECPREFIX = 'exec_'
 IW_WRAPSECT = 'wrapper'
 IW_OUTPUT_OPTIONAL = 'optional'
 
-#IW_META_HEADERS = 'headers'
-#IW_META_COMPUTE = 'compute'
-#IW_META_WCL = 'wcl'
-#IW_UPDATE_HEAD_PREFIX = 'hdrupd_'
-#IW_UPDATE_WHICH_HEAD = 'headers'
-#IW_REQ_META = 'req_metadata'
-#IW_OPT_META = 'opt_metadata'
-
-# lower case because appears as wcl section and wcl sections are converted to lowercase
-#META_HEADERS = 'h'
-#META_COMPUTE = 'c'
-#META_WCL = 'w'
-#META_REQUIRED = 'r'
-#META_OPTIONAL = 'o'
-
 OW_INPUTS = USED
 OW_OUTPUTS = WGB
 OW_ANCESTRY = WDF
@@ -154,26 +132,14 @@ PF_RUN_PAT = '%(unitname)s_r%(reqnum)dp%(attnum)02d'
 PF_TASKNUM = 'tasknum'
 PF_JOBNUM = 'jobnum'
 PF_WRAPNUM = 'wrapnum'
-PF_USE_DB_IN = 'use_db_in'
-PF_USE_DB_OUT = 'use_db_out'
-PF_USE_QCF = 'use_qcf'
 PF_DRYRUN = 'dry_run'
 PF_NOOP = 'noop'
 PF_EXIT_SUCCESS = 0
-PF_EXIT_NEXTBLOCK = 100
 PF_EXIT_FAILURE = 1
 PF_EXIT_OPDELETE = 5     # desrm
 PF_EXIT_MANDELETE = 6    # manually editing table
-PF_EXIT_EUPS_FAILURE = 8
-PF_EXIT_CONDOR = 9
 PF_EXIT_WRAPPER_FAIL = 10
 PF_EXIT_DRYRUN = 2
 PF_EXIT_WARNINGS = 3
-PF_BLKNUM = 'blknum'
 PF_CURRVALS = 'currentvals'
 PF_VERIFY_FILES = 'verify_files'
-
-
-PFWDB_MSG_ERROR = 1
-PFWDB_MSG_WARN = 2
-PFWDB_MSG_INFO = 3

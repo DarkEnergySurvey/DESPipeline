@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-# $Id: pfwsubmit.py 48384 2019-03-11 13:31:55Z friedel $
-# $Rev:: 48384                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2019-03-11 08:31:55 #$:  # Date of last commit.
-
-# pylint: disable=print-statement
-
 """ need to write docstring """
 
 import sys
@@ -17,7 +9,6 @@ import stat
 import intgutils.intgdefs as intgdefs
 import despymisc.miscutils as miscutils
 import processingfw.pfwdefs as pfwdefs
-import processingfw.pfwcondor as pfwcondor
 import processingfw.pfwlog as pfwlog
 
 
@@ -50,40 +41,13 @@ def min_wcl_checks(config):
 
 
 ######################################################################
-def check_proxy(config):
-    """ Check if any block will submit to remote machine needing proxy, if so check for proxy """
-
-    if miscutils.fwdebug_check(3, 'PFWSUBMIT_DEBUG'):
-        miscutils.fwdebug_print("Beg")
-
-    config.reset_blknum()
-    blocklist = miscutils.fwsplit(config[pfwdefs.SW_BLOCKLIST].lower(), ',')
-    for blockname in blocklist:
-        if miscutils.fwdebug_check(3, 'PFWSUBMIT_DEBUG'):
-            miscutils.fwdebug_print("Checking block %s..." % (blockname))
-        config.set_block_info()
-
-        (exists, check_proxy) = config.search(pfwdefs.SW_CHECK_PROXY, {intgdefs.REPLACE_VARS: True})
-        if exists and miscutils.convertBool(check_proxy):
-            timeleft = pfwcondor.get_grid_proxy_timeleft()
-            assert timeleft > 0
-            if timeleft < 21600:   # 5 * 60 * 60
-                print "Warning:  Proxy expires in less than 5 hours"
-                break
-        config.inc_blknum()
-
-    config.reset_blknum()
-    if miscutils.fwdebug_check(3, 'PFWSUBMIT_DEBUG'):
-        miscutils.fwdebug_print("End")
-
-######################################################################
 def create_common_vars(config, jobname):
     """ Create string containing vars string for job """
 
     blkname = config.getfull('blockname')
     attribs = config.get_condor_attributes(blkname, jobname)
     varstr = ""
-    if len(attribs) > 0:
+    if attribs:
         varstr = "VARS %s" % jobname
         for (key, val) in attribs.items():
             varstr += ' %s="%s"' % (key[len(pfwdefs.ATTRIB_PREFIX):], val)

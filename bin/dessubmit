@@ -14,7 +14,6 @@ import cStringIO
 
 import processingfw.pfwdefs as pfwdefs
 import despymisc.miscutils as miscutils
-from processingfw.pfwcondor import CondorException
 import processingfw.pfwsubmit as pfwsubmit
 import processingfw.pfwcheck as pfwcheck
 import processingfw.pfwconfig as pfwconfig
