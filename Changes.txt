@@ -1,0 +1,25 @@
+== 0.1.0 
+Initial version. Relocated all of the misc and python-only code from
+the old despyutils package
+
+== 0.2.0 
+added to despymisc/python the following modules:
+      
+- http_requests.py -- by Michael Graber, to transfer/get files via
+  http/https using the credential stored in the $USER/.desservices.ini
+  file
+- subprocess_utils.py, a set of simple functions to call subprocess.call()
+
+== 0.2.1
+- changes to http_requests.py, the authentication process is now done
+  the function level and not inside the scope
+- Now the __init__ function does not pre-load all of the modules. This
+  was unnecessary.
+
+== 0.2.2
+- Fix the call to fwsplit inside split_ahead_by_ccd.py
+
+
+== 0.2.3
+- Moved subprocess_utils.py to multiprocess.utils.py 
+- minor changes to http_requests.py
