@@ -11,5 +11,3 @@ from . import astrometry
 from . import coords
 from . import tableio
 from . import wcsutil
-from . import genutil
-from .genutil import *
