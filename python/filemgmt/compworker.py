@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-
-# $Id: compworker.py 11430 2013-04-12 21:41:16Z tomashek $
-# $Rev::                                  $:  # Revision of last commit.
-# $LastChangedBy::                        $:  # Author of last commit.
-# $LastChangedDate::                      $:  # Date of last commit.
 """
+    .. _filemgmt-compworker:
+
+    **compworker**
+    --------------
+
     Base class for doing file compression
 """
 
@@ -103,8 +103,8 @@ class CompWorker(object):
     def execute(self, filename):
         """ Call the executable with the stored command line arguments
 
-            Paramters
-            ---------
+            Parameters
+            ----------
             filename : str
                 The name of the file to compress
 

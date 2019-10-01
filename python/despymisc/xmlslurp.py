@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 """
-xmlslurper reads in an xml formatted file and converts it to a python dictionary
+    .. _despymisc-xmlslurp:
+
+    **xmlslurp**
+    ------------
+
+    xmlslurper reads in an xml formatted file and converts it to a python dictionary
 """
 import xml.parsers.expat
 

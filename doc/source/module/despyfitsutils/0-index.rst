@@ -1,0 +1,3 @@
+.. automodule:: despyfitsutils
+   :no-members:
+

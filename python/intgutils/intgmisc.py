@@ -1,12 +1,10 @@
-#!/usr/bin/env python
-
-# $Id: intgmisc.py 44380 2016-10-11 19:12:41Z mgower $
-# $Rev:: 44380                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2016-10-11 14:12:41 #$:  # Date of last commit.
-
 """
-Contains misc integration utilities
+    .. _intgutils-intgmisc:
+
+    **intgmisc**
+    ------------
+
+    Contains misc integration utilities
 """
 
 import shlex
@@ -198,7 +196,7 @@ def get_list_fullnames(sect, modwcl):
     fullnames = read_fullnames_from_listfile(listname, listfmt, ldict['columns'])
     if miscutils.fwdebug_check(3, 'INTGMISC_DEBUG'):
         miscutils.fwdebug_print("\tINFO: fullnames=%s" % fullnames)
-   
+
     if filesect not in fullnames:
         columns = convert_col_string_to_list(ldict['columns'], False)
 
@@ -248,14 +246,14 @@ def get_fullnames(modwcl, fullwcl, exsect=None):
     """ Return dictionaries of input and output fullnames by section """
 
     exec_sectnames = []
-    if exsect is None: 
+    if exsect is None:
         exec_sectnames = get_exec_sections(modwcl, intgdefs.IW_EXEC_PREFIX)
     else:
         exec_sectnames = [exsect]
 
-    # intermediate files (output of 1 exec, but input for another exec 
-    # within same wrapper) are listed only with output files 
-    
+    # intermediate files (output of 1 exec, but input for another exec
+    # within same wrapper) are listed only with output files
+
     # get output file names first so can exclude intermediate files from inputs
     outputs = {}
     allouts = set()

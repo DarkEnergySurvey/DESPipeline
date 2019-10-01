@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-
-# $Id: fpackcompworker.py 11430 2013-04-12 21:41:16Z tomashek $
-# $Rev::                                  $:  # Revision of last commit.
-# $LastChangedBy::                        $:  # Author of last commit.
-# $LastChangedDate::                      $:  # Date of last commit.
 """
+    .. _filemgmt-fpackcompworker:
+
+    **fpackcompworker**
+    -------------------
+
     Class for running FPack on a file
 """
 __version__ = "$Rev: 11430 $"
@@ -64,8 +63,8 @@ class FpackCompWorker(CompWorker):
     def execute(self, filename):
         """ Run the executable
 
-            Paramters
-            ---------
+            Parameters
+            ----------
             filename : str
                 The name of the file to compress
 

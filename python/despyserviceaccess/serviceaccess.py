@@ -1,17 +1,19 @@
-#!/usr/bin/env python
 """
-Support a service access file as described in DESDM-3
+    .. _despyserviceaccess-serviceaccess:
+
+    **serviceaccess**
+    -----------------
+
+    Support a service access file as described in DESDM-3
 
 
-The parse functions return a dictionary of  keys in the specified
-seection of the specified file.
+    The parse functions return a dictionary of  keys in the specified
+    seection of the specified file.
 
-If file or section is not specified, devfaults  are supplied in a tag-specific way
-as sepcified in DESDM-3.
+    If file or section is not specified, devfaults  are supplied in a tag-specific way
+    as sepcified in DESDM-3.
 
-Check supplies chaking of entries as specified in DESDM-3
-
-
+    Check supplies chaking of entries as specified in DESDM-3
 """
 
 import os

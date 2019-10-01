@@ -1,9 +1,10 @@
-# $Id: archive_transfer_globusonline.py 41008 2015-12-11 15:55:43Z mgower $
-# $Rev:: 41008                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2015-12-11 09:55:43 #$:  # Date of last commit.
+"""
+    .. _filemgmt-archive-transfer-globusonline:
 
-""" Class for transferring files via globus.
+    **archive_transfer_globusonline**
+    ---------------------------------
+
+    Class for transferring files via globus.
 """
 
 __version__ = "$Rev: 41008 $"

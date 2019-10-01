@@ -1,4 +1,9 @@
 """
+    .. _processingfw-pfwcompression:
+
+    **pfwcompression**
+    ------------------
+
     Functions used by the processing framework to compress/uncompress files
     within a pipeline job
 """

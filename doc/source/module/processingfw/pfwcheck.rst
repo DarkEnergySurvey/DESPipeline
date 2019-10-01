@@ -1,0 +1,2 @@
+.. automodule:: processingfw.pfwcheck
+

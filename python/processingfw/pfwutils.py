@@ -1,11 +1,11 @@
-#!usr/bin/env python
-# $Id: pfwutils.py 48552 2019-05-20 19:38:27Z friedel $
-# $Rev:: 48552                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2019-05-20 14:38:27 #$:  # Date of last commit.
+"""
+    .. _processingfw-pfwutils:
 
+    **pfwutils**
+    ------------
 
-""" Miscellaneous support functions for processing framework """
+    Miscellaneous support functions for processing framework
+"""
 
 import re
 import os

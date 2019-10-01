@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# $Id: queryutils.py 41598 2016-04-05 20:26:20Z mgower $
-# $Rev:: 41598                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2016-04-05 15:26:20 #$:  # Date of last commit.
+"""
+    .. _intgutils-queryutils:
 
-""" Functions useful for query codes to be called by framework """
+    **queryutils**
+    --------------
+
+    Functions useful for query codes to be called by framework
+"""
 
 import re
 import json

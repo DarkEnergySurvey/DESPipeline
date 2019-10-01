@@ -1,4 +1,11 @@
-""" Miscellaneous FileMgmt utils """
+"""
+    .. _filemgmt-fmutils:
+
+    **fmutils**
+    -----------
+
+    Miscellaneous FileMgmt utils
+"""
 
 class DataObject(object):
     """ Class to turn a dictionary into class elements

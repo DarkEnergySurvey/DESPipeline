@@ -1,0 +1,3 @@
+.. automodule:: despymisc
+   :no-members:
+

@@ -1,12 +1,11 @@
-#!/usr/bin/env python
-# $Id: replace_funcs.py 41600 2016-04-05 20:33:30Z mgower $
-# $Rev:: 41600                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2016-04-05 15:33:30 #$:  # Date of last commit.
+"""
+    .. _intgutils-replace-funcs:
 
-# pylint: disable=print-statement
+    **replace_funcs**
+    -----------------
 
-""" Functions to replace variables in a string with their values from a isinstance(dict) object """
+    Functions to replace variables in a string with their values from a isinstance(dict) object
+"""
 
 import copy
 import re

@@ -1,14 +1,10 @@
-#!/usr/bin/env python
-
-# $Id: basic_wrapper.py 44199 2016-10-04 14:01:31Z friedel $
-# $Rev:: 44199                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2016-10-04 09:01:31 #$:  # Date of last commit.
-
-# pylint: disable=print-statement
-
 """
-Contains definition of basic wrapper class
+    .. _intgutils-basic-wrapper:
+
+    **basic_wrapper**
+    -----------------
+
+    Contains definition of basic wrapper class
 """
 
 import time

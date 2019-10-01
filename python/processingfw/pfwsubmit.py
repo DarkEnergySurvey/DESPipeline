@@ -1,4 +1,12 @@
-""" need to write docstring """
+"""
+    .. _processingfw-pfwsubmit:
+
+    **pfwsubmit**
+    -------------
+
+    need to write docstring
+
+"""
 
 import sys
 import time

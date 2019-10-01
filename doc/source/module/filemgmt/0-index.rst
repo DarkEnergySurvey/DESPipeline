@@ -1,0 +1,3 @@
+.. automodule:: filemgmt
+   :no-members:
+

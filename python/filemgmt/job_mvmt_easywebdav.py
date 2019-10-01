@@ -1,4 +1,10 @@
-""" Class for transferring files via webdav
+"""
+    .. _filemgmt-job-mvmt-easywebdav:
+
+    **job_mvmt_easywebdav**
+    -----------------------
+
+    Class for transferring files via webdav
 """
 
 __version__ = "$Rev: 46423 $"

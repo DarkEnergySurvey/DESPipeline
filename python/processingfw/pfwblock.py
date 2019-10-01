@@ -1,12 +1,11 @@
-#!/usr/bin/env python
-# $Id: pfwblock.py 48552 2019-05-20 19:38:27Z friedel $
-# $Rev:: 48552                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2019-05-20 14:38:27 #$:  # Date of last commit.
+"""
+    .. _processingfw-pfwblock:
 
-# pylint: disable=print-statement
+    **pfwblock**
+    ------------
 
-""" functions used by the block tasks """
+    functions used by the block tasks
+"""
 
 import sys
 import stat
@@ -2391,8 +2390,6 @@ fi
 
 cd $jobdir
         """ % ({'full_job_dir': full_job_dir})
-    else:
-        print "%s wasn't specified.   Running job in condor job directory" % pfwdefs.SW_JOB_BASE_DIR
 
     # untar file containing input wcl files
     scriptstr += """

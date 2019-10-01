@@ -1,13 +1,16 @@
 """
-subprocess4.py
+    .. _despymisc-subprocess4:
 
-Contains a superclass of the Popen module
-which defines a wait4 method for Popen.
+    **subprocess4**
+    ---------------
 
-Example usage:
-import subprocess4
-h = subprocess4.Popen(["/bin/ls", "tmp.my"])
-print h.wait4()
+    Contains a superclass of the Popen module
+    which defines a wait4 method for Popen.
+
+    Example usage:
+    import subprocess4
+    h = subprocess4.Popen(["/bin/ls", "tmp.my"])
+    print h.wait4()
 """
 
 import subprocess

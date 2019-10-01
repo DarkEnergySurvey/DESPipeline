@@ -1,4 +1,11 @@
-""" Contains class definition that stores configuration and state information for PFW """
+"""
+    .. _processingfw-pfwconfig:
+
+    **pfwconfig**
+    -------------
+
+    Contains class definition that stores configuration and state information for PFW
+"""
 
 from collections import OrderedDict
 import sys

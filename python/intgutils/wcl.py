@@ -1,13 +1,10 @@
-#!/usr/bin/env python
-# $Id: wcl.py 41753 2016-04-26 13:12:09Z mgower $
-# $Rev:: 41753                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2016-04-26 08:12:09 #$:  # Date of last commit.
-
-# pylint: disable=print-statement
-
 """
-Contains utilities for use with the Workflow Control Language
+    .. _intgutils-wcl:
+
+    **wcl**
+    -------
+
+    Contains utilities for use with the Workflow Control Language
 """
 
 # Notes:

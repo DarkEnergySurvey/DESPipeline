@@ -1,9 +1,11 @@
-#!/usr/bin/env python
-# $Id: miscutils.py 41806 2016-05-03 16:03:59Z felipe $
-# $Rev:: 41806                            $:  # Revision of last commit.
-# $LastChangedBy:: felipe                 $:  # Author of last commit.
-# $LastChangedDate:: 2016-05-03 11:03:59 #$:  # Date of last commit.
-""" Miscellaneous support functions for framework """
+"""
+    .. _despymisc-miscutils:
+
+    **miscutils**
+    -------------
+
+    Miscellaneous support functions for framework
+"""
 
 import re
 import os
@@ -201,22 +203,18 @@ def parse_fullname(fullname, retmask=CU_PARSE_FILENAME):
 
         retmask : int
             The requested return values. Acceptable values are:
-
-            CU_PARSE_BASENAME : return just the file name, including the
-                extension(s), removing any path components
-            CU_PARSE_COMPRESSION : return the compression, valid compression value
-                are '.fz' and '.gz'
-            CU_PARSE_FILENAME : return the filename with any compression extension
-                removed as well as removing any path components
-            CU_PARSE_PATH : return just the directory path to the file
-            CU_PARSE_HDU : return the HDU of the file, this is specified by an int
-                inside of [] at the end of the file. e.g. file.fits[2] has an HDU of 2
+            * CU_PARSE_BASENAME : return just the file name, including the extension(s), removing any path components
+            * CU_PARSE_COMPRESSION : return the compression, valid compression value are '.fz' and '.gz'
+            * CU_PARSE_FILENAME : return the filename with any compression extension removed as well as removing any path components
+            * CU_PARSE_PATH : return just the directory path to the file
+            * CU_PARSE_HDU : return the HDU of the file, this is specified by an int inside of [] at the end of the file. e.g. file.fits[2] has an HDU of 2
 
             These values can be logically or'd together to get multiple return values.
             e.g. CU_PARSE_FILENAME | CU_PARSE_COMPRESSION will return both the file name
             and the compression as a two element list
 
             Default value is CU_PARSE_FILENAME.
+
         Returns
         -------
         A single string if only one item was requested, or a list of the requested
@@ -335,58 +333,6 @@ def convertBool(var):
     #print "After:", newvar, type(newvar)
     #print "\n\n"
     return newvar
-
-
-# For consistent testing of whether to use database or not
-#    Function argument value overrides environment variable
-#    Nothing set defaults to using DB
-def use_db(arg):
-    """ Determine if we are using the database or not, based on the
-        input dictionary, class, or value, or failing that use the
-        value in the 'DESDM_USE_DB' environment variable. True
-        is returned if none of the baove can be found.
-
-        Parameters
-        ----------
-        arg : varous
-            The item to search for a 'use_db' value. This is done in the following
-            order
-            - If arg is a dictionary, then the value of arg['use_db']
-              is returned
-            - If arg is a class or other structure, then the value of
-              arg.use_db is returned
-            - If arg is any other type then it is cast to a bool and that
-              value is returned.
-
-        Returns
-        -------
-        bool, True if any of the above parameters evaluate to True or all
-        do not exist, False otherwise.
-    """
-    use = True
-
-    args_use_db = None
-    scalar_arg = None
-
-    # handle cases where given arg is dict, argparse.Namespace
-    if isinstance(arg, dict):
-        if 'use_db' in arg:
-            scalar_arg = arg['use_db']
-    elif hasattr(arg, 'use_db'):
-        scalar_arg = arg.use_db
-    else:
-        scalar_arg = arg
-
-    if scalar_arg is not None:
-        args_use_db = convertBool(scalar_arg)
-
-    if args_use_db is not None:
-        if not args_use_db:
-            use = False
-    elif 'DESDM_USE_DB' in os.environ and not convertBool(os.environ['DESDM_USE_DB']):
-        use = False
-
-    return use
 
 # For consistent testing of boolean variables
 #    Example: whether to use database or not
@@ -533,8 +479,8 @@ def get_config_vals(extra_info, config, keylist):
 def dynamically_load_class(class_desc):
     """ Loads class at runtime based upon given string description
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         class_desc : str
             The name of the class to load (but not instantiate)
 
@@ -615,8 +561,8 @@ def get_list_directories(filelist):
 def elapsed_time(t1, verbose=False):
     """ Return the elapsed time since t1 in a human readable format.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         t1 : time instance
             The time from which the calculations are based
 

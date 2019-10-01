@@ -1,0 +1,3 @@
+.. automodule:: intgutils
+   :no-members:
+

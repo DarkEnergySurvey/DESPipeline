@@ -1,4 +1,10 @@
-""" Keywords for fits files
+"""
+    .. _filemgmt-decam-keywords:
+
+    **decam_keywords**
+    ------------------
+
+    Keywords for fits files
 
 """
 keywords = {'AIRMASS': ['Y', 'N'],

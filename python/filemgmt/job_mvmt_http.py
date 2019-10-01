@@ -1,4 +1,10 @@
-""" Move files via http
+"""
+    .. _filemgmt-job-mvmt-http:
+
+    **job_mvmt_http**
+    -----------------
+
+    Move files via http
 """
 
 __version__ = "$Rev: 18938 $"

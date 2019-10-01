@@ -1,9 +1,9 @@
-#!/usr/bin/env python
-# $Id: gonline.py 38167 2015-05-11 17:35:44Z mgower $
-# $Rev:: 38167                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2015-05-11 12:35:44 #$:  # Date of last commit.
 """
+    .. _filemgmt-gonline:
+
+    **gonline**
+    -----------
+
     Module for transferring files via globus online, uses a deprecated python
     module
 """

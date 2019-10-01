@@ -1,11 +1,10 @@
-#!/usr/bin/env python
-# $Id: special_metadata_funcs.py 38203 2015-05-17 14:28:09Z mgower $
-# $Rev:: 38203                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2015-05-17 09:28:09 #$:  # Date of last commit.
-
 """
-Specialized functions for computing metadata
+    .. _despymisc-create-special-metadata:
+
+    **create-special-metadata**
+    ---------------------------
+
+    Specialized functions for computing metadata
 """
 
 import calendar
