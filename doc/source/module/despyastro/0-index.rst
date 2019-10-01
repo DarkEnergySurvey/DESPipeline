@@ -1,3 +1,0 @@
-.. automodule:: despyastro
-   :no-members:
-

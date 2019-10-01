@@ -1,14 +1,6 @@
 Python API
 ==========
 
-Module `despyastro`
--------------------
-
-.. toctree::
-   :glob:
-
-   module/despyastro/*
-
 Module `despyfitsutils`
 -----------------------
 
