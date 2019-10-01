@@ -96,16 +96,6 @@ def set_wcl_value(key, val, wcl):
         miscutils.fwdebug_print("END")
 
 #######################################################################
-def tar_dir(filename, indir):
-    """ Tars a directory """
-    if filename.endswith('.gz'):
-        mode = 'w:gz'
-    else:
-        mode = 'w'
-    with tarfile.open(filename, mode) as tar:
-        tar.add(indir)
-
-#######################################################################
 def tar_list(tarfilename, filelist):
     """ Tars a directory """
 
@@ -117,100 +107,6 @@ def tar_list(tarfilename, filelist):
     with tarfile.open(tarfilename, mode) as tar:
         for filen in filelist:
             tar.add(filen)
-
-
-
-#######################################################################
-def untar_dir(filename, outputdir):
-    """ Untars a directory """
-    if filename.endswith('.gz'):
-        mode = 'r:gz'
-    else:
-        mode = 'r'
-
-    maxcnt = 4
-    cnt = 1
-    done = False
-    while not done and cnt <= maxcnt:
-        with tarfile.open(filename, mode) as tar:
-            try:
-                tar.extractall(outputdir)
-                done = True
-            except OSError as exc:
-                if exc.errno == errno.EEXIST:
-                    print "Problems untaring %s: %s" % (filename, exc)
-                    if cnt < maxcnt:
-                        print "Trying again."
-                else:
-                    print "Error: %s" % exc
-                    raise
-        cnt += 1
-
-    if not done:
-        print "Could not untar %s.  Aborting" % filename
-
-
-###########################################################################
-# assumes exit code for version is 0
-def get_version(execname, execdefs):
-    """run command with version flag and parse output for version"""
-
-    ver = None
-    if (execname.lower() in execdefs and
-            'version_flag' in execdefs[execname.lower()] and
-            'version_pattern' in execdefs[execname.lower()]):
-        verflag = execdefs[execname.lower()]['version_flag']
-        verpat = execdefs[execname.lower()]['version_pattern']
-
-        cmd = "%s %s" % (execname, verflag)
-        try:
-            process = subprocess.Popen(cmd.split(),
-                                       shell=False,
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT)
-        except:
-            (extype, exvalue, _) = sys.exc_info()
-            print "********************"
-            print "Unexpected error: %s - %s" % (extype, exvalue)
-            print "cmd> %s" % cmd
-            print "Probably could not find %s in path" % cmd.split()[0]
-            print "Check for mispelled execname in submit wcl or"
-            print "    make sure that the corresponding eups package is in the metapackage "
-            print "    and it sets up the path correctly"
-            raise
-
-        process.wait()
-        out = process.communicate()[0]
-        if process.returncode != 0:
-            miscutils.fwdebug_print("INFO:  problem when running code to get version")
-            miscutils.fwdebug_print("\t%s %s %s" % (execname, verflag, verpat))
-            miscutils.fwdebug_print("\tcmd> %s" % cmd)
-            miscutils.fwdebug_print("\t%s" % out)
-            ver = None
-        else:
-            # parse output with verpat
-            try:
-                pmatch = re.search(verpat, out)
-                if pmatch:
-                    ver = pmatch.group(1)
-                else:
-                    if miscutils.fwdebug_check(1, "PFWUTILS_DEBUG"):
-                        miscutils.fwdebug_print("re.search didn't find version for exec %s" % \
-                                                execname)
-                    if miscutils.fwdebug_check(3, "PFWUTILS_DEBUG"):
-                        miscutils.fwdebug_print("\tcmd output=%s" % out)
-                        miscutils.fwdebug_print("\tcmd verpat=%s" % verpat)
-            except Exception as err:
-                #print type(err)
-                ver = None
-                print "Error: Exception from re.match.  Didn't find version: %s" % err
-                raise
-    else:
-        if miscutils.fwdebug_check(3, "PFWUTILS_DEBUG"):
-            miscutils.fwdebug_print("INFO: Could not find version info for exec %s" % execname)
-
-    return ver
-
 
 ############################################################################
 def run_cmd_qcf(cmd, logfilename, execnames):
@@ -270,55 +166,6 @@ def run_cmd_qcf(cmd, logfilename, execnames):
     if miscutils.fwdebug_check(3, "PFWUTILS_DEBUG"):
         miscutils.fwdebug_print("END")
     return process_wrap.returncode
-
-
-#######################################################################
-def index_job_info(jobinfo):
-    """ create dictionary of jobs indexed on blk task id """
-    job_byblk = {}
-    for j, jdict in jobinfo.items():
-        blktid = jdict['pfw_block_task_id']
-        if blktid not in job_byblk:
-            job_byblk[blktid] = {}
-        job_byblk[blktid][j] = jdict
-
-    return job_byblk
-
-
-#######################################################################
-def index_wrapper_info(wrapinfo):
-    """ create dictionaries of wrappers indexed on jobnum and modname """
-    wrap_byjob = {}
-    wrap_bymod = {}
-    for wrap in wrapinfo.values():
-        if wrap['pfw_job_task_id'] not in wrap_byjob:
-            wrap_byjob[wrap['pfw_job_task_id']] = {}
-        wrap_byjob[wrap['pfw_job_task_id']][wrap['wrapnum']] = wrap
-        if wrap['modname'] not in wrap_bymod:
-            wrap_bymod[wrap['modname']] = {}
-        wrap_bymod[wrap['modname']][wrap['wrapnum']] = wrap
-
-    return wrap_byjob, wrap_bymod
-
-
-#######################################################################
-def index_jobwrapper_info(jwrapinfo):
-    """ create dictionaries of wrappers indexed on jobnum and wrapnum """
-
-    jwrap_byjob = {}
-    jwrap_bywrap = {}
-    for jwrap in jwrapinfo.values():
-        if jwrap['label'] is None:
-            print "Missing label for jobwrapper task."
-            print "Make sure you are using print_job.py from same ProcessingFW version as processing attempt"
-            sys.exit(1)
-        if jwrap['parent_task_id'] not in jwrap_byjob:
-            jwrap_byjob[jwrap['parent_task_id']] = {}
-        jwrap_byjob[jwrap['parent_task_id']][int(jwrap['label'])] = jwrap
-        jwrap_bywrap[int(jwrap['label'])] = jwrap
-
-    return jwrap_byjob, jwrap_bywrap
-
 
 #######################################################################
 def should_save_file(mastersave, filesave, exitcode):
