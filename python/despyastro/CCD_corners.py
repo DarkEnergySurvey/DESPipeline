@@ -1,15 +1,18 @@
-#!/usr/bin/env python
+"""
+    .. _despyastro-ccd-corners:
 
-# $Id: CCD_corners.py 44632 2016-11-28 18:23:25Z felipe $
-# $Rev:: 44632                            $:  # Revision of last commit.
-# $LastChangedBy:: felipe                 $:  # Author of last commit.
-# $LastChangedDate:: 2016-11-28 12:23:25 #$:  # Date of last commit.
+    **CCD_corners**
+    ---------------
+
+"""
 
 import numpy
 from despyastro import wcsutil
 
 def update_DESDM_corners(hdr, border=0, get_extent=False, verbose=False, logger=None):
-    """ Recompute the corners and center of the CCD """
+    """ Recompute the corners and center of the CCD
+
+    """
     mess = "Using header WCS to compute coordinates for CCD center and corners"
     if logger:
         logger.info(mess)
@@ -111,8 +114,8 @@ def update_DESDM_corners(hdr, border=0, get_extent=False, verbose=False, logger=
 
 def get_DESDM_corners_extent(ras, decs):
     """
-    Additional quantities for future COADD queries
-    Some may not yet be supported in DB.
+        Additional quantities for future COADD queries
+        Some may not yet be supported in DB.
     """
 
     # Make sure that they are numpy objetcs
@@ -143,30 +146,30 @@ def get_DESDM_corners_extent(ras, decs):
 def DESDM_corners(hdr, border=0):
     """ set the DESDM corners
         DESDM CCD Image Corner Coordinates definitions for DECam
-        see: https://desdb.cosmology.illinois.edu/confluence/display/PUB/CCD+Image+Corners+Coordinates
+        see: https://desdb.cosmology.illinois.edu/confluence/display/PUB/CCD+Image+Corners+Coordinates ::
 
 
-                         x-axis
-          (RA4,DEC4)                   (RA3,DEC3)
-          Corner 4 +-----------------+ Corner 3
-        (1,NAXIS2) |                 | (NAXIS1,NAXIS2)
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |   y-axis
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |
-                   |                 |
-         (RA1,DEC1)|                 | (RA2,DEC2)
-          Corner 1 +-----------------+ Corner 2
-             (1,1)                     (NAXIS1,1)
+            |                  x-axis
+            |   (RA4,DEC4)                   (RA3,DEC3)
+            |   Corner 4 +-----------------+ Corner 3
+            | (1,NAXIS2) |                 | (NAXIS1,NAXIS2)
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |   y-axis
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |            |                 |
+            |  (RA1,DEC1)|                 | (RA2,DEC2)
+            |   Corner 1 +-----------------+ Corner 2
+            |      (1,1)                     (NAXIS1,1)
 
         For fpacked images, NAXIS1/NAXIS2 do not represent the true
         dimensions of the image, so we need to use ZNAXIS1/ZNAXIS2

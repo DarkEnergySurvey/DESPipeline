@@ -1,18 +1,18 @@
 """
-A collection of useful functions in astrometry. The functions ported
-here correspond to a subset of inhereted from Felipe Menanteau's
-astrometry.py old library. Removed all wcs/header transformations as
-this are better handled by Erin Sheldon wcsutil
+    .. _despyastro-astrometry:
 
-The functions will:
-     - format decimal <---> DDMMSS/HHMMMSS
-     - greater circle distance(ra,dec)
-     - area in polygon
+    **astrometry**
+    --------------
 
- Requires:
-     numpy
+    A collection of useful functions in astrometry. The functions ported
+    here correspond to a subset of inhereted from Felipe Menanteau's
+    astrometry.py old library. Removed all wcs/header transformations as
+    this are better handled by Erin Sheldon wcsutil
 
- Felipe Menanteau, Apr/Oct 2014
+    The functions will:
+         - format decimal <---> DDMMSS/HHMMMSS
+         - greater circle distance(ra,dec)
+         - area in polygon
 
 """
 import math

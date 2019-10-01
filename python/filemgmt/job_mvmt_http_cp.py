@@ -1,4 +1,9 @@
 """
+    .. _filemgmt-jov-mvmt-http-cp:
+
+    **job_mvmt_http_cp**
+    --------------------
+
     Module to use when http for transfers between job and home archive, and
     cp between job and target archive
 """

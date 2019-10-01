@@ -1,6 +1,12 @@
 #!/usr//bin/env python
-""" A collection of scripts to read and write very simple ascii tables.
-    Collected by F.Menanteau.
+"""
+    .. _despyastro-tableio:
+
+    **tableio**
+    -----------
+
+    A collection of scripts to read and write very simple ascii tables.
+
 """
 
 import string
@@ -9,7 +15,9 @@ import numpy
 #Read/write headers
 
 def get_header(fname):
-    """ Returns a string containing all the lines at the top of a file which start with '#' """
+    """
+        Returns a string containing all the lines at the top of a file which start with '#'
+    """
     buff = ''
     for line in open(fname).readlines():
         if line.startswith('#'):
@@ -19,7 +27,17 @@ def get_header(fname):
     return buff
 
 def put_header(fname, text):
-    """ Adds text (starting by '#' and ending by '\n') to the top of a file. """
+    """ Adds text (starting by # and ending with a new line) to the top of a file.
+
+        Parameters
+        ----------
+        fname : str
+            Filename
+
+        text : str
+            Text to add
+
+    """
     if not text:
         return
     if not text.startswith('#'):
@@ -34,9 +52,10 @@ def put_header(fname, text):
 def get_str(fname, cols=0, nrows='all', sep=None):
     """
         Reads strings from a file
-        Usage:
-	     x, y, z = get_str('myfile.cat', (0, 1, 2))
-         x, y, z are returned as string lists
+        Examples
+        --------
+	    >>>  x, y, z = get_str('myfile.cat', (0, 1, 2))
+        >>>  x, y, z are returned as string lists
     """
     # Modified to be feed a buffer as well as a file
     # F. Menanteau
@@ -78,8 +97,9 @@ def get_str(fname, cols=0, nrows='all', sep=None):
 
 def put_str(fname, tupla):
     """ Writes tuple of string lists to a file
-        Usage:
-	  put_str(file,(x,y,z))
+        Examples
+        --------
+	    >>>  put_str(file,(x,y,z))
     """
     if not isinstance(tupla, tuple):
         raise Exception('Need a tuple of variables')
@@ -101,8 +121,9 @@ def put_str(fname, tupla):
 
 def get_data(fname, cols=0, nrows='all', sep=None):
     """ Returns data in the columns defined by the tuple
-    (or single integer) cols as a tuple of float arrays
-    (or a single float array)"""
+        (or single integer) cols as a tuple of float arrays
+        (or a single float array)
+    """
     if isinstance(cols, int):
         cols = (cols,)
         nvar = 1
@@ -121,11 +142,13 @@ def get_data(fname, cols=0, nrows='all', sep=None):
 
 def put_data(fname, variables, header='', fmt='', append='no'):
     """ Writes tuple of float variables to a file
-        Usage:
-	  put_data(file,(x,y,z),header,format)
-	where header is any string
+        Examples
+        --------
+	    >>>  put_data(file,(x,y,z),header,format)
+
+	    where header is any string
         and format is a string of the type:
-           '%f %f %i '
+            '%f %f %i '
     """
     if isinstance(variables, tuple):
         raise Exception('Need a tuple of variables')
@@ -156,8 +179,9 @@ def put_data(fname, variables, header='', fmt='', append='no'):
 
 def rcols(fname, cols=None, nrows='all'):
     """ Returns data in the columns defined by the tuple
-    (or single integer) cols as a tuple of float arrays
-    (or a single float array)"""
+        (or single integer) cols as a tuple of float arrays
+        (or a single float array)
+    """
 
     if cols is None:
         nvar = 0
@@ -181,9 +205,10 @@ def rcols(fname, cols=None, nrows='all'):
 def get_string(fname, cols=None, nrows='all', buff=None):
     """
         Reads strings from a file
-        Usage:
-	     x,y,z=get_str('myfile.cat',(0,1,2))
-        x,y,z are returned as string lists
+        Examples
+        --------
+	    >>>  x,y,z=get_str('myfile.cat',(0,1,2))
+        >>>  x,y,z are returned as string lists
 
         Modified to read from buffer, F. Menanteau
 
@@ -230,10 +255,11 @@ def get_string(fname, cols=None, nrows='all', buff=None):
 
 def get_datarray(fname, cols=0, nrows='all', buff=None):
     """ Returns data in the columns defined by the tuple
-    (or single integer) cols as a tuple of float arrays
-    (or a single float array)
+        (or single integer) cols as a tuple of float arrays
+        (or a single float array)
 
-    Modified to read from buffer, F. Menanteau"""
+        Modified to read from buffer, F. Menanteau
+    """
 
     if isinstance(cols, 0):
         cols = (cols,)
@@ -256,13 +282,32 @@ def get_datarray(fname, cols=0, nrows='all', buff=None):
 # Added from useful.py
 
 def get_2Darray(fname, cols='all', nrows='all', verbose='no'):
-    """Read the data on the defined columns of a file
-    to an 2 array
-    Usage:
-    x=get_2Darray(file)
-    x=get_2Darray(file,range(len(p))
-    x=get_2Darray(file,range(0,10,2),nrows=5000)
-    Returns x(nrows,ncols)
+    """ Read the data on the defined columns of a file
+        to an 2 array
+
+        Parameters
+        ----------
+        fname : str
+            File name
+
+        cols : str
+            Something
+
+        nrows : str
+            Something
+
+        verbose : str
+            Something
+
+        Examples
+        --------
+        >>>  x = get_2Darray(file)
+        >>>  x = get_2Darray(file,range(len(p))
+        >>>  x = get_2Darray(file,range(0,10,2),nrows=5000)
+
+        Returns
+        -------
+        x(nrows,ncols)
     """
     if cols == 'all':
         #Get the number of columns in the file
@@ -290,12 +335,15 @@ def get_2Darray(fname, cols='all', nrows='all', verbose='no'):
 
 def put_2Darray(fname, array, header='', fmt='', append='no'):
     """ Writes a 2D array to a file, where the first
-    index changes along the lines and the second along
-    the columns
-    Usage: put_2Darray(file,a,header,format)
-	where header is any string
+        index changes along the lines and the second along
+        the columns
+        Examples
+        --------
+        >>>  put_2Darray(file,a,header,format)
+
+        where header is any string
         and format is a string of the type:
-           '%f %f %i '
+        '%f %f %i '
     """
     lista = []
     for i in range(array.shape[1]):

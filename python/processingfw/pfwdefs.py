@@ -1,7 +1,12 @@
-""" Constants used across various files to make changes easier """
+"""
+    .. _processingfw-pfwdefs:
 
-# when changing values, check if change also needed in $PROCESSINGFW_DIR/etc/pfwconfig.des
-#
+    **pfwdefs**
+    -----------
+
+    Constants used across various files to make changes easier
+"""
+
 # SW_  submit wcl
 # IW_  (wrapper) input wcl
 # OW_  (wrapper) output wcl

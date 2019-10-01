@@ -1,9 +1,11 @@
-# $Id: misctime.py 40842 2015-11-19 15:49:50Z felipe $
-# $Rev:: 40842                            $:  # Revision of last commit.
-# $LastChangedBy:: felipe                 $:  # Author of last commit.
-# $LastChangedDate:: 2015-11-19 09:49:50 #$:  # Date of last commit.
+"""
+    .. _despymisc-misctime:
 
-""" Miscellaneous date/time utilities """
+    **misctime**
+    ------------
+
+    Miscellaneous date/time utilities
+"""
 
 import datetime
 from dateutil.parser import parse

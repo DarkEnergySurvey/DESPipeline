@@ -1,10 +1,10 @@
-# $Id: easywebdav_utils.py 42792 2016-06-22 19:25:07Z mgower $
-# $Rev:: 42792                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2016-06-22 14:25:07 #$:  # Date of last commit.
-
 """
-Routines for performing tasks on files available through http.
+    .. _filemgmt-easywebdav-utils:
+
+    **easywebdav_utils**
+    --------------------
+
+    Routines for performing tasks on files available through http.
 """
 
 __version__ = "$Rev: 42792 $"
@@ -36,7 +36,9 @@ class EwdUtils(object):
         destination : str
             Name or IP of the destination host.
 
-       >>> C = EwdUtils('test_http_utils/.desservices.ini', 'file-http', 'des.cosmology.edu')
+        Examples
+        --------
+        >>> C = EwdUtils('test_http_utils/.desservices.ini', 'file-http', 'des.cosmology.edu')
     """
     copyfiles_called = 0
 

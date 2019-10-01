@@ -1,4 +1,11 @@
-""" Contains functions used to check submit wcl for missing or invalid values """
+"""
+    .. _processingfw-pfwcheck:
+
+    **pfwcheck**
+    ------------
+
+    Contains functions used to check submit wcl for missing or invalid values
+"""
 
 import sys
 import traceback

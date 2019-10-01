@@ -1,4 +1,10 @@
-""" Move files locally
+"""
+    .. _filemgmt-job-mvmt-local:
+
+    **job_mvmt_local**
+    ------------------
+
+    Move files locally
 """
 
 __version__ = "$Rev: 46423 $"

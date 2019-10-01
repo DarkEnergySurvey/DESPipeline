@@ -1,6 +1,11 @@
 """
-Generic filetype management class used to do filetype specific tasks
-     such as metadata and content ingestion
+    .. _filemgmt-ftmgmt-coadd-xml-scamp:
+
+    **ftmgmt_coadd_xml_scamp**
+    --------------------------
+
+    Generic filetype management class used to do filetype specific tasks
+    such as metadata and content ingestion
 """
 
 __version__ = "$Rev: 41948 $"

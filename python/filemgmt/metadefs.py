@@ -1,4 +1,9 @@
 """
+    .. _filemgmt-metadefs:
+
+    **metadefs**
+    ------------
+
     Constants for the FileMgmt package
 """
 

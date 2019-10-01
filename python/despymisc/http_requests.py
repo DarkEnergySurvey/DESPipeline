@@ -1,16 +1,20 @@
-'''
-Library module providing an easy-to-use API for http requests to DESDM services.
+"""
+    .. _despymisc-http-request:
 
-Loads credentials from a desfile storing credentials (.desservices.ini, by
-default assumed to be in the users home directory).
+    **http_request**
+    ----------------
+    Library module providing an easy-to-use API for http requests to DESDM services.
 
-USAGE:
-``````
-- download DES file from address:
-    http_requests.download_file_des('http://www.blabla.net/foo.xyz', 'blabla.xyz')
+    Loads credentials from a desfile storing credentials (.desservices.ini, by
+    default assumed to be in the users home directory).
 
-:author: michael h graber, michael.graber@fhnw.ch
-'''
+    USAGE:
+    ------
+    - download DES file from address:
+        http_requests.download_file_des('http://www.blabla.net/foo.xyz', 'blabla.xyz')
+
+    :author: michael h graber, michael.graber@fhnw.ch
+"""
 
 import os
 import urllib

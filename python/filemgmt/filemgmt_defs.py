@@ -1,9 +1,10 @@
-# $Id: filemgmt_defs.py 46644 2018-03-12 19:54:58Z friedel $
-# $Rev:: 46644                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2018-03-12 14:54:58 #$:  # Date of last commit.
+"""
+    .. _filemgmt-filemgmt-defs:
 
-""" Constants used in file management code
+    **filemgmt_defs**
+    -----------------
+
+    Constants used in file management code
 
 """
 

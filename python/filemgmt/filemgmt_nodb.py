@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-
-# $Id: filemgmt_nodb.py 47142 2018-06-20 14:27:28Z friedel $
-# $Rev:: 47142                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2018-06-20 09:27:28 #$:  # Date of last commit.
-
 """
+    .. _filemgmt-filemgmt-nodb:
+
+    **filemgmt_nodb**
+    -----------------
+
     Define a class to do file management tasks without DB
 """
 

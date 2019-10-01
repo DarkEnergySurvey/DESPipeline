@@ -1,19 +1,11 @@
 """
- $Id:$
- $Rev::                                  $:  # Revision of last commit.
- $LastChangedBy::                        $:  # Author of last commit.
- $LastChangedDate::                      $:  # Date of last commit.
+    .. _despyastro-coords:
 
+    **coords**
+    ----------
 
- Taken from Erin Sheldon's esutil package at:
- http://esutil.googlecode.com/svn/trunk/esutil/coords.py
- Felipe Menanteau, NCSA, March 2014.
-
-    NAME
-        coords
-    PURPOSE
-        A set of astronomical utilities for dealing with coordinates and
-        coordinate transformations.
+    A set of astronomical utilities for dealing with coordinates and
+    coordinate transformations.
 
     COORDINATE TRANSFORMATIONS
         euler:
@@ -24,23 +16,23 @@
         l,b = eq2gal(ra, dec, b1950=False, dtype='f8')
             Convert equatorial to glactic coordinates.
 
-        # The following use the same interface:
-        gal2eq
-            Convert galactic to equatorial coordinates.
-        eq2ec
-            Convert equatorial to ecliptic coordinates.
-        ec2eq
-            Convert ecliptic to equatorial coordinates.
-        ec2gal
-            Convert ecliptic to galactic coordinates.
-        gal2ec
-            Convert galactic to ecliptic coordinates.
+        The following use the same interface:
+            gal2eq:
+                Convert galactic to equatorial coordinates.
+            eq2ec:
+                Convert equatorial to ecliptic coordinates.
+            ec2eq:
+                Convert ecliptic to equatorial coordinates.
+            ec2gal:
+                Convert ecliptic to galactic coordinates.
+            gal2ec:
+                Convert galactic to ecliptic coordinates.
 
-        # These SDSS specific functions do not use euler
-        eq2sdss
-            Convert between equatorial and corrected SDSS survey coords.
-        sdss2eq
-            Convert between corrected SDSS survey and equatorial coords.
+        These SDSS specific functions do not use euler:
+            eq2sdss:
+                Convert between equatorial and corrected SDSS survey coords.
+            sdss2eq:
+                Convert between corrected SDSS survey and equatorial coords.
 
         eq2xyz: Convert equatorial to x,y,z on the sphere according to
             the following transform:
@@ -66,10 +58,10 @@
         radec2aitoff:
             Convert ra,dec to aitoff coordinates.
 
-        dec_parse(decstring)
+        dec_parse(decstring):
             parse a colon separated string representing declination ito
             degrees.
-        ra_parse(decstring)
+        ra_parse(decstring):
             parse a colon separated string representing right ascension ito
             degrees.
 
@@ -81,8 +73,12 @@
             Create random points in a cap, or disc, centered at the
             input ra,dec location and with radius rad.
 
-        rect_area(lon_min, lon_max, lat_min, lat_max)
+        rect_area(lon_min, lon_max, lat_min, lat_max):
             Calculate the area of a rectangle on the sphere.
+
+    Taken from Erin Sheldon's esutil package at:
+    http://esutil.googlecode.com/svn/trunk/esutil/coords.py (2014)
+
 """
 
 import math
@@ -144,10 +140,7 @@ _sdsspar['doc'] = """
 
 def euler(ai_in, bi_in, select, b1950=False, dtype='f8'):
     """
-    NAME:
-        euler
-    PURPOSE:
-        Transform between Galactic, celestial, and ecliptic coordinates.
+    Transform between Galactic, celestial, and ecliptic coordinates.
 
     CALLING SEQUENCE:
         long_out, lat_out =
@@ -547,7 +540,9 @@ def gcirc(ra1deg, dec1deg, ra2deg, dec2deg, getangle=False):
 
 # utility functions
 def atbound(longitude, minval, maxval):
-    """ unwrap the longitude """
+    """
+        unwrap the longitude
+    """
     w, _, _ = numpy.where(longitude < minval)
     while w.size > 0:
         longitude[w] += 360.0
@@ -559,7 +554,9 @@ def atbound(longitude, minval, maxval):
         w, _, _ = numpy.where(longitude > maxval)
 
 def atbound2(theta, phi):
-    """ unwrap theta """
+    """
+        unwrap theta
+    """
     atbound(theta, -180.0, 180.0)
 
     w, _, _ = numpy.where(numpy.abs(theta) > 90.0)

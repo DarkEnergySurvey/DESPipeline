@@ -1,4 +1,9 @@
 """
+    .. _filemgmt-utils:
+
+    **utils**
+    ---------
+
     Utility functions for FileMgmt.
 """
 import os

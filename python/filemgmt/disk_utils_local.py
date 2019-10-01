@@ -1,10 +1,10 @@
-# $Id: disk_utils_local.py 46644 2018-03-12 19:54:58Z friedel $
-# $Rev:: 46644                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2018-03-12 14:54:58 #$:  # Date of last commit.
-
 """
-Generic routines for performing tasks on files that can be seen locally
+    .. _filemgmt-disk-utils-local:
+
+    **disk_utils_local**
+    --------------------
+
+    Generic routines for performing tasks on files that can be seen locally
 """
 
 __version__ = "$Rev: 46644 $"
@@ -227,7 +227,7 @@ def remove_file_if_exists(filename):
     """ Method to remove a single file if it exisits
 
         Parameters
-        ---------
+        ----------
         filename : str
             The name of the file to delete
     """

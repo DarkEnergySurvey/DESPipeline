@@ -1,0 +1,2 @@
+.. automodule:: filemgmt.gonline
+

@@ -1,5 +1,10 @@
 """
-Module to take an input file of HDU's and output only those requested
+    .. _despymisc-scamputil:
+
+    **scamputil**
+    -------------
+
+    Module to take an input file of HDU's and output only those requested
 """
 
 def split_ahead_by_ccd(infile, outfile, ccd_list):
@@ -7,12 +12,11 @@ def split_ahead_by_ccd(infile, outfile, ccd_list):
     Function to take an .ahead (for SCAMP) and splits only those individual
     HDUs/elements that correspond to CCDs requested.
 
-    Inputs:
     infile:  an ASCII file (typically and .ahead with WCS header descriptions
-             for all possible HDUs)
+    for all possible HDUs)
 
     outfile: an ASCII file containing only those HDUs of the infile that
-             are specified to be included by ccdlist
+    are specified to be included by ccdlist
 
     ccdlist: an integer list of HDUs to include in the outfile
 

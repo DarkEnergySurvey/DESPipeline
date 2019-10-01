@@ -1,4 +1,11 @@
-""" Functions that handle a processing framework execution event """
+"""
+    .. _processingfw-pfwlog:
+
+    **pfwlog**
+    ----------
+
+    Functions that handle a processing framework execution event
+"""
 
 import os
 import time

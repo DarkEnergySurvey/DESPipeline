@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-
-# $Id: ftmgmt_genfits.py 47020 2018-05-18 14:58:09Z friedel $
-# $Rev:: 47020                            $:  # Revision of last commit.
-# $LastChangedBy:: friedel                $:  # Author of last commit.
-# $LastChangedDate:: 2018-05-18 09:58:09 #$:  # Date of last commit.
-
 """
-Generic filetype management class used to do filetype specific tasks
-     such as metadata and content ingestion
+    .. _filemgmt-ftmgmt-genfits:
+
+    **ftmgmt_genfits**
+    ------------------
+
+    Generic filetype management class used to do filetype specific tasks
+    such as metadata and content ingestion
 """
 
 __version__ = "$Rev: 47020 $"

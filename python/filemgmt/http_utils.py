@@ -1,5 +1,10 @@
 """
-Routines for performing tasks on files available through http.
+    .. _filemgmt-http-utils:
+
+    **http_utils**
+    --------------
+
+    Routines for performing tasks on files available through http.
 """
 
 __version__ = "$Rev: 18486 $"
@@ -38,9 +43,11 @@ class HttpUtils(object):
         secondsBetweenRetries : int
             How many seconds between each retry
 
+        Examples
+        --------
         >>> C = HttpUtils('test_http_utils/.desservices.ini', 'file-http')
         >>> len(C.curl_password)
-        25
+        >>> 25
 
     """
     copyfiles_called = 0
@@ -70,7 +77,7 @@ class HttpUtils(object):
         self.curl.setopt(pycurl.USERPWD, self.curl_password)
 
     def check_url(self, P):
-        """See if P is a url.
+        """ See if `P` is a url.
 
             Parameters
             ----------
@@ -79,13 +86,17 @@ class HttpUtils(object):
 
             Returns
             -------
-            bool
+            bool, True if `P` is a url, False otherwise
 
-        >>> C = HttpUtils('test_http_utils/.desservices.ini', 'file-http')
-        >>> C.check_url("http://desar2.cosmology.illinois.edu")
-        ('http://desar2.cosmology.illinois.edu', True)
-        >>> C.check_url("hello")
-        ('hello', False)"""
+            Examples
+            --------
+            >>> C = HttpUtils('test_http_utils/.desservices.ini', 'file-http')
+            >>> C.check_url("http://desar2.cosmology.illinois.edu")
+            >>>     ('http://desar2.cosmology.illinois.edu', True)
+            >>> C.check_url("hello")
+            >>>     ('hello', False)
+
+        """
         if re.match("^https?:", P):
             return (P, True)
         return (P, False)

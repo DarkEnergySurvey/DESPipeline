@@ -1,4 +1,11 @@
-""" string definitions """
+"""
+    .. _intgutils-intgdefs:
+
+    **intgdefs**
+    ------------
+
+    string definitions
+"""
 
 REPLACE_VARS = 'replace_vars'
 

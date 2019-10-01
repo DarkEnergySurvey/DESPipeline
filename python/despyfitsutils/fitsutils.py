@@ -1,8 +1,12 @@
-#!/usr/bin/env python
-# $Id: fitsutils.py 40722 2015-11-06 14:37:48Z mgower $
-# $Rev:: 40722                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2015-11-06 08:37:48 #$:  # Date of last commit.
+"""
+    .. _despyfitsutils-fitsutils:
+
+    **fitsutils**
+    -------------
+
+    Miscellaneous generic support functions for fits files
+
+"""
 
 import re
 import os
@@ -11,7 +15,6 @@ import pyfits
 
 import despymisc.miscutils as miscutils
 
-""" Miscellaneous generic support functions for fits files """
 
 class makeMEF(object):
 
@@ -47,7 +50,7 @@ class makeMEF(object):
         if os.path.isfile(self.outname) and self.clobber is False:
             print " [WARNING]: Output file exists, try --clobber option, no file was created"
             return
-        
+
         # Get the Pyfits version as a float
         self.pyfitsVersion = float(".".join(pyfits.__version__.split(".")[0:2]))
 
@@ -71,18 +74,18 @@ class makeMEF(object):
 
             if self.verb: print "# Adding EXTNAME=%s to HDU %s" % (extname,k)
             # Method for pyfits < 3.1
-            if self.pyfitsVersion < 3.1: 
+            if self.pyfitsVersion < 3.1:
                 hdu[0].header.update('EXTNAME',extname, 'Extension Name' ,after='NAXIS2')
                 if extname in makeMEF.DES_EXT.keys():
                     hdu[0].header.update('DES_EXT',makeMEF.DES_EXT[extname], 'DESDM Extension Name' ,after='EXTNAME')
-            else:   
-                hdu[0].header.set('EXTNAME', extname, 'Extension Name', after='NAXIS2') 
+            else:
+                hdu[0].header.set('EXTNAME', extname, 'Extension Name', after='NAXIS2')
                 if extname in makeMEF.DES_EXT.keys():
                     hdu[0].header.set('DES_EXT',makeMEF.DES_EXT[extname], 'DESDM Extension Name' ,after='EXTNAME')
 
             k = k + 1
         return
-    
+
     def read(self,**kwargs):
 
         """ Read in the HDUs using pyfits """
@@ -112,7 +115,7 @@ def combine_cats(incats, outcat):
     Combine all input catalogs (each with 3 hdus) into a single fits file
     """
 
-    # if incats is comma-separated list, split into python list 
+    # if incats is comma-separated list, split into python list
     comma_re = re.compile("\s*,\s*")
     incat_lst = comma_re.split(incats)
 

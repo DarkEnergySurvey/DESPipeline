@@ -1,11 +1,10 @@
-#!/usr/bin/env python
-# $Id: special_metadata_funcs.py 38203 2015-05-17 14:28:09Z mgower $
-# $Rev:: 38203                            $:  # Revision of last commit.
-# $LastChangedBy:: mgower                 $:  # Author of last commit.
-# $LastChangedDate:: 2015-05-17 09:28:09 #$:  # Date of last commit.
-
 """
-Specialized functions for computing metadata
+    .. _despyfitsutils-fits-special-metadata:
+
+    **fits_special_metadata**
+    -------------------------
+
+    Specialized functions for computing metadata
 """
 
 import pyfits
@@ -129,7 +128,7 @@ def func_radeg(filename, hdulist=None, whichhdu=None):
         hdulist2.close()
 
     return spmeta.convert_ra_to_deg(ra)
-    
+
 
 ######################################################################
 def func_tradeg(filename, hdulist=None, whichhdu=None):
@@ -165,7 +164,7 @@ def func_decdeg(filename, hdulist=None, whichhdu=None):
         hdulist2.close()
 
     return spmeta.convert_dec_to_deg(dec)
-    
+
 
 ######################################################################
 def func_tdecdeg(filename, hdulist=None, whichhdu=None):
