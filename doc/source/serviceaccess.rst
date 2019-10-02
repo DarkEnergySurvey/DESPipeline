@@ -5,7 +5,7 @@ Service Access Files
 
 Service access files are used to store authentication credentials for processes such as
 database access and file transport via http. These files are of the format used by
-`ConfigParser <https://docs.python.org/2/library/configparser.html>`_
+`ConfigParser <https://docs.python.org/2/library/configparser.html>`_ ::
 
     [file-http]
     user = username
@@ -15,10 +15,10 @@ In the pipeline's nomenclature ``file-http`` is the section name. When parsed
 a dictionary containing the entries will be returned. In this example you would
 get
 
-    .. _code-block:: python
+.. code-block:: python
 
-        {'user': 'username',
-         'passwd': 'userPassword'}
+    {'user': 'username',
+     'passwd': 'userPassword'}
 
 An individual file can contain more than one section, but when parsed only the
 requested section is returned.
