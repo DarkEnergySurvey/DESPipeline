@@ -149,12 +149,12 @@ if __name__ == '__main__':
 
     #artifacts = getFilesToCompress(args,dbh)
     artifacts = []
-    compressor = miscutils.dynamically_load_class(args["class"])(args["cleanup"], args["exeargs"])
+    comp = miscutils.dynamically_load_class(args["class"])(args["cleanup"], args["exeargs"])
 
     prov = {}
     for rowdict in artifacts:
         filecompressor = FileCompressor(infile=args["file"],
-                                        compressor=compressor,
+                                        compressor=comp,
                                         cleanup=args["cleanup"])
         retcode = filecompressor.execute()
 

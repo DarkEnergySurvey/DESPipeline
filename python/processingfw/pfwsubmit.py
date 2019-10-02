@@ -119,9 +119,6 @@ def write_block_dag(config, blkdir, blockname, debugfh=None):
     dagfh.write('\nPARENT begblock CHILD jobmngr\n')
     dagfh.write('PARENT jobmngr CHILD endblock\n')
     dagfh.close()
-    pfwcondor.add2dag(dag, config.get_dag_cmd_opts(),
-                      config.get_condor_attributes(blockname, "blockmngr"),
-                      blkdir, debugfh)
     os.chdir(cwd)
     return dag
 
@@ -146,9 +143,6 @@ def write_stub_jobmngr_dag(config, block, blkdir, debugfh=None):
                 (pfwdir, block))
     dagfh.close()
 
-    pfwcondor.add2dag(dag, config.get_dag_cmd_opts(),
-                      config.get_condor_attributes(block, "jobmngr"),
-                      blkdir, debugfh)
 
     os.unlink(dag)
     return dag

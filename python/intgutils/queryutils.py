@@ -19,10 +19,10 @@ def convert_single_files_to_lines(filelist, initcnt=1):
     count = initcnt
     linedict = {'list': {}}
 
-    if type(filelist) is dict and len(filelist) > 1 and \
+    if isinstance(filelist, dict) and len(filelist) > 1 and \
             'filename' not in filelist.keys():
         filelist = filelist.values()
-    elif type(filelist) is dict:  # single file
+    elif isinstance(filelist, dict):  # single file
         filelist = [filelist]
 
     linedict = {'list': {intgdefs.LISTENTRY: {}}}

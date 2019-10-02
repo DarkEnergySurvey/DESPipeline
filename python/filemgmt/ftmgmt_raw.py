@@ -10,14 +10,11 @@
 
 __version__ = "$Rev: 46337 $"
 
-import os
-from datetime import datetime
 import pyfits
 
-from ftmgmt_genfits import FtMgmtGenFits
-import decam_keywords
+from filemgmt.ftmgmt_genfits import FtMgmtGenFits
+import filemgmt.decam_keywords as decam_keywords
 import despymisc.miscutils as miscutils
-import despymisc.create_special_metadata as spmeta
 
 class FtMgmtRaw(FtMgmtGenFits):
     """  Class for managing a raw filetype (get metadata, update metadata, etc)

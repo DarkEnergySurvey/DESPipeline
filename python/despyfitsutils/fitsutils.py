@@ -36,15 +36,17 @@ class makeMEF(object):
     def __init__(self, **kwargs):
 
 
-        self.filenames = kwargs.pop('filenames',False)
-        self.outname   = kwargs.pop('outname',False)
-        self.clobber   = kwargs.pop('clobber',False)
-        self.extnames  = kwargs.pop('extnames',None)
-        self.verb      = kwargs.pop('verb',False)
+        self.filenames = kwargs.pop('filenames', False)
+        self.outname = kwargs.pop('outname', False)
+        self.clobber = kwargs.pop('clobber', False)
+        self.extnames = kwargs.pop('extnames', None)
+        self.verb = kwargs.pop('verb', False)
 
         # Make sure that filenames and outname are defined
-        if not self.filenames: sys.exit("ERROR: must provide input file names")
-        if not self.outname:   sys.exit("ERROR: must provide output file name")
+        if not self.filenames:
+            sys.exit("ERROR: must provide input file names")
+        if not self.outname:
+            sys.exit("ERROR: must provide output file name")
 
         # Output file exits
         if os.path.isfile(self.outname) and self.clobber is False:
@@ -61,7 +63,7 @@ class makeMEF(object):
 
         return
 
-    def addEXTNAME(self,**kwargs):
+    def addEXTNAME(self):
 
         """Add a user-provided list of extension names to the MEF"""
 
@@ -70,43 +72,42 @@ class makeMEF(object):
             return
 
         k = 0
-        for extname,hdu in zip(self.extnames,self.HDU):
-
-            if self.verb: print "# Adding EXTNAME=%s to HDU %s" % (extname,k)
+        for extname, hdu in zip(self.extnames, self.HDU):
+            if self.verb:
+                print "# Adding EXTNAME=%s to HDU %s" % (extname, k)
             # Method for pyfits < 3.1
             if self.pyfitsVersion < 3.1:
-                hdu[0].header.update('EXTNAME',extname, 'Extension Name' ,after='NAXIS2')
+                hdu[0].header.update('EXTNAME', extname, 'Extension Name', after='NAXIS2')
                 if extname in makeMEF.DES_EXT.keys():
-                    hdu[0].header.update('DES_EXT',makeMEF.DES_EXT[extname], 'DESDM Extension Name' ,after='EXTNAME')
+                    hdu[0].header.update('DES_EXT', makeMEF.DES_EXT[extname], 'DESDM Extension Name', after='EXTNAME')
             else:
                 hdu[0].header.set('EXTNAME', extname, 'Extension Name', after='NAXIS2')
                 if extname in makeMEF.DES_EXT.keys():
-                    hdu[0].header.set('DES_EXT',makeMEF.DES_EXT[extname], 'DESDM Extension Name' ,after='EXTNAME')
+                    hdu[0].header.set('DES_EXT', makeMEF.DES_EXT[extname], 'DESDM Extension Name', after='EXTNAME')
 
-            k = k + 1
-        return
+            k += 1
 
-    def read(self,**kwargs):
+    def read(self):
 
         """ Read in the HDUs using pyfits """
         self.HDU = []
         k = 0
         for fname in self.filenames:
-            if self.verb: print "# Reading %s --> HDU %s" % (fname,k)
+            if self.verb:
+                print "# Reading %s --> HDU %s" % (fname, k)
             self.HDU.append(pyfits.open(fname))
             k = k + 1
-        return
 
-    def write(self,**kwargs):
+    def write(self):
 
         """ Write MEF file with no Primary HDU """
         newhdu = pyfits.HDUList()
 
         for hdu in self.HDU:
             newhdu.append(hdu[0])# ,hdu[0].header)
-        if self.verb: print "# Writing to: %s" % self.outname
-        newhdu.writeto(self.outname,clobber=self.clobber)
-        return
+        if self.verb:
+            print "# Writing to: %s" % self.outname
+        newhdu.writeto(self.outname, clobber=self.clobber)
 
 
 #######################################################################
@@ -116,7 +117,7 @@ def combine_cats(incats, outcat):
     """
 
     # if incats is comma-separated list, split into python list
-    comma_re = re.compile("\s*,\s*")
+    comma_re = re.compile(r"\s*,\s*")
     incat_lst = comma_re.split(incats)
 
     if miscutils.fwdebug_check(3, 'FITSUTILS_DEBUG'):
@@ -156,7 +157,7 @@ def splitScampHead(head_out, heads):
       reqheadcount: expected number of individual head files
     """
 
-    comma_re = re.compile("\s*,\s*")
+    comma_re = re.compile(r"\s*,\s*")
     head_lst = comma_re.split(heads)
     reqheadcount = len(head_lst)
     headcount = 0
@@ -164,8 +165,8 @@ def splitScampHead(head_out, heads):
     linecount = 0
     linecount_tot = 0
     filehead = None
-    for line in open(head_out,'r'):
-        if re.match("^HISTORY   Astrometric solution by SCAMP.*",line):
+    for line in open(head_out, 'r'):
+        if re.match("^HISTORY   Astrometric solution by SCAMP.*", line):
             if filehead != None:
                 filehead.close()
                 if miscutils.fwdebug_check(3, 'FITSUTILS_DEBUG'):
@@ -175,10 +176,10 @@ def splitScampHead(head_out, heads):
                     raise ValueError("Number of END lines (%d) does not match number of HISTORY lines (%d)" % (endcount, headcount))
             if miscutils.fwdebug_check(3, 'FITSUTILS_DEBUG'):
                 miscutils.fwdebug_print("Opening .head file %d --> %s" % (headcount, head_lst[headcount]))
-            filehead = open(head_lst[headcount],'w')
+            filehead = open(head_lst[headcount], 'w')
             headcount += 1
             linecount = 0
-        elif re.match("^END\s*",line):
+        elif re.match(r"^END\s*", line):
             endcount += 1
         filehead.write(line)
         linecount += 1
@@ -201,7 +202,7 @@ def splitScampHead(head_out, heads):
 
 #######################################################################
 def get_hdr(hdulist, whichhdu):
-
+    """ doc """
     if whichhdu is None:
         whichhdu = 'Primary'
 
@@ -225,6 +226,7 @@ def get_hdr(hdulist, whichhdu):
 
 #######################################################################
 def get_hdr_value(hdulist, key, whichhdu=None):
+    """ doc """
     ukey = key.upper()
 
     hdr = get_hdr(hdulist, whichhdu)
@@ -234,6 +236,7 @@ def get_hdr_value(hdulist, key, whichhdu=None):
 
 #######################################################################
 def get_hdr_extra(hdulist, key, whichhdu=None):
+    """ doc """
     ukey = key.upper()
 
     hdr = get_hdr(hdulist, whichhdu)
@@ -244,6 +247,7 @@ def get_hdr_extra(hdulist, key, whichhdu=None):
 
 #######################################################################
 def get_ldac_imhead_as_cardlist(imhead):
+    """ doc """
     data = imhead.data
     cards = []
     for cd in data[0][0]:
@@ -253,5 +257,6 @@ def get_ldac_imhead_as_cardlist(imhead):
 
 #######################################################################
 def get_ldac_imhead_as_hdr(imhead):
+    """ doc """
     hdr = pyfits.Header(get_ldac_imhead_as_cardlist(imhead))
     return hdr

@@ -11,7 +11,6 @@ import re
 import os
 import sys
 import tarfile
-import errno
 import subprocess
 import shlex
 import time

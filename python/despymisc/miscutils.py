@@ -15,7 +15,6 @@ import datetime
 import inspect
 import errno
 from collections import Mapping
-import logging
 
 
 #######################################################################

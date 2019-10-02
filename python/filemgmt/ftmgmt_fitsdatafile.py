@@ -12,8 +12,6 @@ __version__ = "$Rev: 41700 $"
 
 from filemgmt.ftmgmt_genfits import FtMgmtGenFits
 
-import despymisc.miscutils as miscutils
-
 class FtMgmtFitsDatafile(FtMgmtGenFits):
     """  Class for managing a filetype whose contents can be read by datafile_ingest """
 

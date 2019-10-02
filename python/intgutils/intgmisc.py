@@ -124,8 +124,8 @@ def read_fullnames_from_listfile(listfile, linefmt, colstr):
 
     fullnames = {}
     pos2fsect = {}
-    for pos in range(0, len(columns)):
-        lcol = columns[pos].lower()
+    for pos, col in enumerate(columns):
+        lcol = col.lower()
         if lcol.endswith('.fullname'):
             filesect = lcol[:-9]
             pos2fsect[pos] = filesect
@@ -172,7 +172,7 @@ def read_fullnames_from_listfile(listfile, linefmt, colstr):
 
 ######################################################################
 def get_list_fullnames(sect, modwcl):
-
+    """ doc """
     (_, listsect, filesect) = sect.split('.')
     ldict = modwcl[intgdefs.IW_LIST_SECT][listsect]
 
@@ -204,8 +204,8 @@ def get_list_fullnames(sect, modwcl):
             miscutils.fwdebug_print('columns=%s' % columns)
 
         hasfullname = False
-        for pos in range(0, len(columns)):
-            lcol = columns[pos].lower()
+        for col in columns:
+            lcol = col.lower()
             if lcol.endswith('.fullname') and lcol.startswith(filesect):
                 hasfullname = True
         if hasfullname:
@@ -221,7 +221,7 @@ def get_list_fullnames(sect, modwcl):
 
 ######################################################################
 def get_file_fullnames(sect, filewcl, fullwcl):
-
+    """ doc """
     sectkeys = sect.split('.')
     sectname = sectkeys[1]
 
@@ -266,7 +266,7 @@ def get_fullnames(modwcl, fullwcl, exsect=None):
                 if sectkeys[0] == intgdefs.IW_FILE_SECT:
                     outset = get_file_fullnames(sect, modwcl[intgdefs.IW_FILE_SECT], fullwcl)
                 elif sectkeys[0] == intgdefs.IW_LIST_SECT:
-                    listname, outset = get_list_fullnames(sect, modwcl)
+                    _, outset = get_list_fullnames(sect, modwcl)
                 else:
                     print "exwcl[intgdefs.IW_OUTPUTS]=", exwcl[intgdefs.IW_OUTPUTS]
                     print "sect = ", sect
@@ -285,7 +285,7 @@ def get_fullnames(modwcl, fullwcl, exsect=None):
                 if sectkeys[0] == intgdefs.IW_FILE_SECT:
                     inset = get_file_fullnames(sect, modwcl[intgdefs.IW_FILE_SECT], fullwcl)
                 elif sectkeys[0] == intgdefs.IW_LIST_SECT:
-                    listname, inset = get_list_fullnames(sect, modwcl)
+                    _, inset = get_list_fullnames(sect, modwcl)
                     #inset.add(listname)
                 else:
                     print "exwcl[intgdefs.IW_INPUTS]=", exwcl[intgdefs.IW_INPUTS]

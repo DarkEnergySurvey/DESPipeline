@@ -18,10 +18,10 @@ import despyfitsutils.fitsutils as fitsutils
 def replace_vars_single(instr, valdict, opts=None):
     """ Return single instr after replacing vars """
 
-    assert(isinstance(instr, str))
+    assert isinstance(instr, str)
     #assert(isinstance(valdict, dict))
 
-    values, keeps = replace_vars(instr, valdict, opts)
+    values, _ = replace_vars(instr, valdict, opts)
 
     retval = None
     if isinstance(values, list):
@@ -41,7 +41,7 @@ def replace_vars_single(instr, valdict, opts=None):
 def replace_vars_type(instr, valdict, required, stype, opts=None):
     """ Search given string for variables of 1 type and replace """
 
-    assert(isinstance(instr, str))
+    assert isinstance(instr, str)
     #assert(isinstance(valdict, dict))
 
     keep = {}
@@ -169,7 +169,7 @@ def replace_vars_loop(valpair, valdict, opts=None):
     keepdone = []
     maxtries = 100    # avoid infinite loop
     count = 0
-    while len(looptodo) > 0 and count < maxtries:
+    while looptodo and count < maxtries:
         count += 1
         valpair = looptodo.pop()
 
@@ -239,7 +239,7 @@ def replace_vars_loop(valpair, valdict, opts=None):
 def replace_vars(instr, valdict, opts=None):
     """ Replace variables in given instr """
 
-    assert(isinstance(instr, str))
+    assert isinstance(instr, str)
     #assert(isinstance(valdict, dict))
 
     newstr = copy.copy(instr)
@@ -328,4 +328,3 @@ def replace_vars(instr, valdict, opts=None):
     if miscutils.fwdebug_check(5, 'REPL_DEBUG'):
         miscutils.fwdebug_print("END")
     return val2return
-

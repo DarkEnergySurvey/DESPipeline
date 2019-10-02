@@ -6,13 +6,90 @@
 
     Specialized functions for computing metadata
 """
+import calendar
+import re
 import math
 
 
 VALID_BANDS = ['u', 'g', 'r', 'i', 'z', 'Y', 'VR', 'N964', 'N662']
 
 ######################################################################
+def create_band(flter):
+    """ Create band from filter """
+
+    band = flter.split(' ')[0]
+    if band not in VALID_BANDS:
+        raise KeyError("filter yields invalid band")
+    return band
+
+
+######################################################################
+def create_camsym(instrume):
+    """ Create band from filter """
+
+    return instrume[0]
+
+
+######################################################################
+def create_nite(date_obs):
+    """ Create nite from DATE-OBS """
+
+    # date_obs = 'YYYY-MM-DDTHH:MM:SS.S'
+    v = date_obs.split(':')
+    hh = int(v[0].split('-')[2][-2:])
+    if hh > 14:
+        nite = v[0][:-3].replace('-', '')
+    else:
+        y = int(v[0][0:4])
+        m = int(v[0][5:7])
+        d = int(v[0][8:10])-1
+        if d == 0:
+            m = m - 1
+            if m == 0:
+                m = 12
+                y = y - 1
+            d = calendar.monthrange(y, m)[1]
+        nite = str(y).zfill(4)+str(m).zfill(2)+str(d).zfill(2)
+
+    return nite
+
+######################################################################
+def create_field(obj):
+    """ create the field from OBJECT """
+
+    m = re.search(r" hex (\S+)", obj)
+    if m:
+        field = m.group(1)
+    else:
+        raise KeyError("Cannot parse OBJECT (%s) for 'field' value")
+
+    return field
+
+######################################################################
+def convert_ra_to_deg(ra):
+    """ Return RA in degrees """
+
+    xx = map(float, ra.split(':'))
+    radeg = 15.0 * (xx[0] + xx[1]/60.0 + xx[2]/3600.0)
+    return round(radeg, 6)
+
+######################################################################
+def convert_dec_to_deg(dec):
+    """ Return DEC in degrees """
+
+    lteldec = dec.split(':')
+    firstchar = lteldec[0][0]
+    xx = map(float, lteldec)
+    if firstchar == '-':
+        tdecsgn = -1.
+    else:
+        tdecsgn = 1.
+    tdecdeg = tdecsgn * (abs(xx[0]) + xx[1]/60.0 + xx[2]/3600.0)
+    return round(tdecdeg, 6)
+
+######################################################################
 def fwhm_arcsec(farglist):
+    """ docstr """
 #
 #   This is derived from "calc_pixscale" in runSExtractor.c.  This python version is different
 #   from the original c code in that it checks to see if cd1_1 and cd2_2 are both non-zero, otherwise

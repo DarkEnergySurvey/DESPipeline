@@ -14,8 +14,6 @@ import sys
 import shutil
 import hashlib
 import errno
-import time
-import copy
 
 import despymisc.miscutils as miscutils
 
@@ -237,4 +235,3 @@ def remove_file_if_exists(filename):
         if exc.errno != errno.ENOENT: # errno.ENOENT = no such file or directory
             raise
 # end remove_file_if_exists
-

@@ -17,11 +17,11 @@
     OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 """
 
-import requests
 import platform
 from numbers import Number
 import xml.etree.cElementTree as xml
 from collections import namedtuple
+import requests
 
 py_majversion, py_minversion, py_revversion = platform.python_version_tuple()
 
@@ -35,13 +35,16 @@ else:
 DOWNLOAD_CHUNK_SIZE_BYTES = 1 * 1024 * 1024
 
 class WebdavException(Exception):
+    """ doc """
     pass
 
 class ConnectionFailed(WebdavException):
+    """ doc """
     pass
 
 
 def codestr(code):
+    """ doc """
     return HTTP_CODES.get(code, 'UNKNOWN')
 
 
@@ -49,11 +52,13 @@ File = namedtuple('File', ['name', 'size', 'mtime', 'ctime', 'contenttype'])
 
 
 def prop(elem, name, default=None):
+    """ doc """
     child = elem.find('.//{DAV:}' + name)
     return default if child is None else child.text
 
 
 def elem2file(elem):
+    """ doc """
     return File(
         prop(elem, 'href'),
         int(prop(elem, 'getcontentlength', 0)),
@@ -63,14 +68,14 @@ def elem2file(elem):
     )
 
 class OperationFailed(WebdavException):
-    _OPERATIONS = dict(
-        HEAD = "get header",
-        GET = "download",
-        PUT = "upload",
-        DELETE = "delete",
-        MKCOL = "create directory",
-        PROPFIND = "list directory",
-        )
+    """ doc """
+    _OPERATIONS = dict(HEAD="get header",
+                       GET="download",
+                       PUT="upload",
+                       DELETE="delete",
+                       MKCOL="create directory",
+                       PROPFIND="list directory",
+                      )
 
     def __init__(self, method, path, expected_code, actual_code):
         self.method = method
@@ -90,6 +95,7 @@ class OperationFailed(WebdavException):
         super(OperationFailed, self).__init__(msg)
 
 class Client(object):
+    """ doc """
     def __init__(self, host, port=0, auth=None, username=None, password=None,
                  protocol='http', verify_ssl=True, path=None, cert=None):
         if not port:
@@ -128,6 +134,7 @@ class Client(object):
         return "".join((self.baseurl, self.cwd, path))
 
     def cd(self, path):
+        """ doc """
         path = path.strip()
         if not path:
             return
@@ -140,10 +147,14 @@ class Client(object):
             self.cwd += stripped_path
 
     def mkdir(self, path, safe=False):
+        """ doc """
+
         expected_codes = 201 if not safe else (201, 301, 405)
         self._send('MKCOL', path, expected_codes)
 
     def mkdirs(self, path):
+        """ doc """
+
         dirs = [d for d in path.split('/') if d]
         if not dirs:
             return
@@ -151,9 +162,9 @@ class Client(object):
             dirs[0] = '/' + dirs[0]
         old_cwd = self.cwd
         try:
-            for dir in dirs:
+            for d in dirs:
                 try:
-                    self.mkdir(dir, safe=True)
+                    self.mkdir(d, safe=True)
                 except Exception as e:
                     if e.actual_code == 409:
                         raise
@@ -163,14 +174,17 @@ class Client(object):
             self.cd(old_cwd)
 
     def rmdir(self, path, safe=False):
+        """ doc """
         path = str(path).rstrip('/') + '/'
         expected_codes = 204 if not safe else (204, 404)
         self._send('DELETE', path, expected_codes)
 
     def delete(self, path):
+        """ doc """
         self._send('DELETE', path, 204)
 
     def upload(self, local_path_or_fileobj, remote_path):
+        """ doc """
         if isinstance(local_path_or_fileobj, basestring):
             with open(local_path_or_fileobj, 'rb') as f:
                 self._upload(f, remote_path)
@@ -181,6 +195,7 @@ class Client(object):
         self._send('PUT', remote_path, (200, 201, 204), data=fileobj)
 
     def download(self, remote_path, local_path_or_fileobj):
+        """ doc """
         self.lastresponse = self._send('GET', remote_path, 200, stream=True)
         if isinstance(local_path_or_fileobj, basestring):
             with open(local_path_or_fileobj, 'wb') as f:
@@ -193,6 +208,7 @@ class Client(object):
             fileobj.write(chunk)
 
     def ls(self, remote_path='.'):
+        """ doc """
         headers = {'Depth': '1'}
         self.lastresponse = self._send('PROPFIND', remote_path, (207, 301), headers=headers)
 
@@ -205,23 +221,28 @@ class Client(object):
         return [elem2file(elem) for elem in tree.findall('{DAV:}response')]
 
     def exists(self, remote_path):
+        """ doc """
         self.lastresponse = self._send('HEAD', remote_path, (200, 301, 404))
         return True if self.lastresponse.status_code != 404 else False
 
     def getresponse(self):
+        """ doc """
         return self.lastresponse
 
     def getreason(self):
+        """ doc """
         if self.lastresponse is None:
             return ""
         return self.lastresponse.reason
 
     def getstatus(self):
+        """ doc """
         if self.lastresponse is None:
             return 0
         return self.lastresponse.status_code
 
     def settimeout(self, connect=0., read=0.):
+        """ doc """
         if connect > 0.:
             self.connecttimeout = connect
         if read > 0.:

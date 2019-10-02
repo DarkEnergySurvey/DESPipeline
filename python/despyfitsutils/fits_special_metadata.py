@@ -131,7 +131,7 @@ def func_radeg(filename, hdulist=None, whichhdu=None):
 
 
 ######################################################################
-def func_tradeg(filename, hdulist=None, whichhdu=None):
+def func_tradeg(filename, hdulist=None):
     """ return the fits header value TELRA in degrees """
 
     hdulist2 = None
@@ -167,7 +167,7 @@ def func_decdeg(filename, hdulist=None, whichhdu=None):
 
 
 ######################################################################
-def func_tdecdeg(filename, hdulist=None, whichhdu=None):
+def func_tdecdeg(filename, hdulist=None):
     """ return the fits header value TELDEC in degrees """
 
     hdulist2 = None
