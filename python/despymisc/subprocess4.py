@@ -4,13 +4,9 @@
     **subprocess4**
     ---------------
 
-    Contains a superclass of the Popen module
-    which defines a wait4 method for Popen.
+    Contains a subclass of subprocess.Popen, but defines wait4 method to make sure
+    it waits properly for completion.
 
-    Example usage:
-    import subprocess4
-    h = subprocess4.Popen(["/bin/ls", "tmp.my"])
-    print h.wait4()
 """
 
 import subprocess
@@ -21,16 +17,37 @@ import psutil
 
 class Popen(subprocess.Popen):
     """
-    This class defines a superclass of the Popen module.
-    It defines a wait4 method for Popen.
+        This class defines a subclass of the subprocess.Popen module.
+        It defines a wait4 method to ensure that the wait is properly
+        done.
+
+        Parameters
+        ----------
+        args : various
+            Passed directly to subprocess.Popen
+
+        kwargs : dict
+            Passed directly to subprocess.Popen
     """
     def __init__(self, args, **kwargs):
         self.rusage = None
         subprocess.Popen.__init__(self, args, **kwargs)
 
     def wait4(self):
+        #pylint: disable=no-member
         """ Wait for child process to terminate.
-            Returns returncode attribute."""
+            Returns returncode attribute.
+
+            Returns
+            -------
+            int
+                The return code from whatever was executed by Popen.
+
+            Raises
+            ------
+            OSError
+                If there is an error waiting.
+            """
 
         while self.returncode is None:
             try:

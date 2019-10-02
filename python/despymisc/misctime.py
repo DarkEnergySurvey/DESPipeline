@@ -4,7 +4,7 @@
     **misctime**
     ------------
 
-    Miscellaneous date/time utilities
+    Miscellaneous date/time utility
 """
 
 import datetime
@@ -12,11 +12,23 @@ from dateutil.parser import parse
 from dateutil import tz
 
 def convert_utc_str_to_nite(datestr):
+    """ Convert an UTC date string to a nite string, it takes into account
+        the time zone of observation, which is hard coded to 'America/Santiago'.
+        If the observation was taken before 15 hours then it is considered to
+        be from the previous night.
 
-    """
-    Convert an UTC date string to a nite string, but without using pytz
-    to avoid unnecessary dependancy. Translated from the old convert_utc_str_to_nite()
-    F. Menanteau.
+        Parameters
+        ----------
+        datestr : str
+            The formatted timestamp of the observation time. Format is
+            YYYY-MM-DDTHH:MM:SS.S+HH:MM
+
+        Returns
+        -------
+        str
+            The nite of the observation
+
+
     """
 
     # e.g. datestr: 2014-08-15T17:31:02.416533+00:00

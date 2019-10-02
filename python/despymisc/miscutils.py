@@ -4,7 +4,7 @@
     **miscutils**
     -------------
 
-    Miscellaneous support functions for framework
+    Miscellaneous support functions for the DES framework.
 """
 
 import re
@@ -67,8 +67,9 @@ def fwdebug_check(msglvl, envdbgvar):
 
         Returns
         -------
-        bool, True if msglvl is less than or equal to the current debug level,
-        False otherwise
+        bool
+            True if msglvl is less than or equal to the current debug level,
+            False otherwise
     """
     # environment debug variable overrides code set level
 
@@ -138,13 +139,13 @@ def fwsplit(fullstr, delim=','):
 
         Returns
         -------
-        List containing the elements from the split
+        list
+            Contains the elements from the split
 
         Examples
         --------
-        fwsplit('1,2,3,4') returns ['1', '2', '3', '4']
-
-        fwsplit('1,2,4:6') returns ['1', '2', '4', '5', '6']
+        >>> fwsplit('1,2,3,4') returns ['1', '2', '3', '4']
+        >>> fwsplit('1,2,4:6') returns ['1', '2', '4', '5', '6']
 
     """
     #fullstr = re.sub('[()]', '', fullstr) # delete parens if exist
@@ -171,6 +172,11 @@ def coremakedirs(thedir):
         ----------
         thedir : str
             The directory to make
+
+        Raises
+        ------
+        OSError
+            If there is an error creating the directory.
     """
     if thedir and not os.path.exists(thedir):  # some parallel filesystems really don't like
                                                # trying to make directory if it already exists
@@ -202,6 +208,7 @@ def parse_fullname(fullname, retmask=CU_PARSE_FILENAME):
 
         retmask : int
             The requested return values. Acceptable values are:
+
             * CU_PARSE_BASENAME : return just the file name, including the extension(s), removing any path components
             * CU_PARSE_COMPRESSION : return the compression, valid compression value are '.fz' and '.gz'
             * CU_PARSE_FILENAME : return the filename with any compression extension removed as well as removing any path components
@@ -216,8 +223,9 @@ def parse_fullname(fullname, retmask=CU_PARSE_FILENAME):
 
         Returns
         -------
-        A single string if only one item was requested, or a list of the requested
-        parts if retmask is an or'd value. None will be returned if there is no result.
+        various
+            A single string if only one item was requested, or a list of the requested
+            parts if retmask is an or'd value. None will be returned if there is no result.
     """
     fwdebug(3, 'MISCUTILS_DEBUG', "fullname = %s" % fullname)
     fwdebug(3, 'MISCUTILS_DEBUG', "retmask = %s" % retmask)
@@ -307,7 +315,8 @@ def convertBool(var):
 
         Returns
         -------
-        The bool value of the input item
+        bool
+            The bool value of the input item
     """
     #print "Before:", var, type(var)
     newvar = None
@@ -329,14 +338,8 @@ def convertBool(var):
             raise Exception("Type not handled (var, type): %s, %s" % (var, type(var)))
     else:
         newvar = False
-    #print "After:", newvar, type(newvar)
-    #print "\n\n"
     return newvar
 
-# For consistent testing of boolean variables
-#    Example: whether to use database or not
-#    Function argument value overrides environment variable
-#    Lower case key for arg lookup, Upper case for environ lookup
 def checkTrue(key, arg, default=True):
     """ Check whether the given value is true. If arg is a dictionary then
         the boolean value of arg[key] is returned. If arg is a class or other structure
@@ -358,7 +361,8 @@ def checkTrue(key, arg, default=True):
 
         Returns
         -------
-        The bool value of the requested item, or the given default value.
+        bool
+            The bool value of the requested item, or the given default value.
     """
     ret_val = default
 
@@ -391,7 +395,9 @@ def checkTrue(key, arg, default=True):
 ##     http://bugs.python.org/issue10592
 def pretty_print_dict(the_dict, out_file=None, sortit=False, indent=4):
     """ Outputs a given dictionary in a format easier for human reading where items within
-        the same sub-dictionary could be output in alphabetical order
+        the same sub-dictionary could be output in alphabetical order. PrettyPrinter doesn't
+        work for certain nested dictionary (OrderedDict) cases
+        http://bugs.python.org/issue10592
 
         Parameters
         ----------
@@ -458,7 +464,8 @@ def get_config_vals(extra_info, config, keylist):
 
         Returns
         -------
-        Dict containing the found keys and their values.
+        dict
+            Contains the found keys and their values.
     """
     info = {}
     for k, stat in keylist.items():
@@ -485,7 +492,8 @@ def dynamically_load_class(class_desc):
 
         Returns
         -------
-        Class of the requested type
+        class
+            Class of the requested type
     """
 
     fwdebug(3, 'MISCUTILS_DEBUG', "class_desc = %s" % class_desc)
@@ -512,6 +520,11 @@ def updateOrderedDict(d, u):
 
         u : dict
             The dictionary containing the new key-value pairs for d.
+
+        Raises
+        ------
+        TypeError
+            If an unexpected data structure is encountered.
     """
 
     for k, v in u.iteritems():
@@ -539,7 +552,8 @@ def get_list_directories(filelist):
 
         Returns
         -------
-        List of directories in the paths of the files.
+        list
+            List of directories in the paths of the files.
     """
     dirlist = {}
     for f in filelist:

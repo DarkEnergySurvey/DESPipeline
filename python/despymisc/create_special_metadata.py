@@ -4,7 +4,7 @@
     **create-special-metadata**
     ---------------------------
 
-    Specialized functions for computing metadata
+    Specialized functions for computing metadata for FITS files
 """
 import calendar
 import re
@@ -15,7 +15,25 @@ VALID_BANDS = ['u', 'g', 'r', 'i', 'z', 'Y', 'VR', 'N964', 'N662']
 
 ######################################################################
 def create_band(flter):
-    """ Create band from filter """
+    """ Create band from filter name, but ensure that it is a valid
+        value.
+
+        Parameters
+        ----------
+        flter : str
+            String containing the filter name, usually taken from a
+            header value.
+
+        Returns
+        -------
+        str
+            The band for the image.
+
+        Raises
+        ------
+        KeyError
+            If the detected band is not in the list of valid bands
+    """
 
     band = flter.split(' ')[0]
     if band not in VALID_BANDS:
@@ -25,15 +43,48 @@ def create_band(flter):
 
 ######################################################################
 def create_camsym(instrume):
-    """ Create band from filter """
+    """ Create the camsym from the instrument header keyword.
+
+        Parameters
+        ----------
+        instrume : str
+            The instrument name from a header keyword.
+
+        Returns
+        -------
+        str
+            The camsym.
+    """
 
     return instrume[0]
 
 
 ######################################################################
 def create_nite(date_obs):
-    """ Create nite from DATE-OBS """
+    """ Create nite from DATE-OBS header keyword. If the observation was
+        taken before 15 hours then it is considered to be from the
+        previous night.
 
+        Parameters
+        ----------
+        date_obs : str
+            The formatted timestamp of the observation time. Format is
+            YYYY-MM-DDTHH:MM:SS.S
+
+        Returns
+        -------
+        str
+            The nite of the observation
+
+        Examples
+        --------
+        >>> create_nite('2018-02-15T02:00:30.2')
+            '20180214'
+        >>> create_nite('2018-02-15T15:00:30.2')
+            '20180215'
+        >>> create_nite('2018-01-01T02:00:30.2')
+            '20171231'
+    """
     # date_obs = 'YYYY-MM-DDTHH:MM:SS.S'
     v = date_obs.split(':')
     hh = int(v[0].split('-')[2][-2:])
@@ -55,19 +106,52 @@ def create_nite(date_obs):
 
 ######################################################################
 def create_field(obj):
-    """ create the field from OBJECT """
+    """ Create the field from the OBJECT header keyword. The field is
+        considered to be the value after ``hex`` in `obj`.
 
+        Parameters
+        ----------
+        obj : str
+            The contents of the OBJECT keyword.
+
+        Returns
+        -------
+        str
+            The field of observation.
+
+        Raises
+        ------
+        KeyError
+            If the given data cannot be properly parsed.
+
+        Examples
+        --------
+        >>> create_field('xyz  hex blah')
+        'blah'
+    """
     m = re.search(r" hex (\S+)", obj)
     if m:
         field = m.group(1)
     else:
-        raise KeyError("Cannot parse OBJECT (%s) for 'field' value")
+        raise KeyError("Cannot parse OBJECT (%s) for 'field' value" % obj)
 
     return field
 
 ######################################################################
 def convert_ra_to_deg(ra):
-    """ Return RA in degrees """
+    """ Convert RA in sexagesimal format to decimal degrees, rounded
+        to 6 decimal places.
+
+        Parameters
+        ----------
+        ra : str
+            The RA in sexagesimal format.
+
+        Returns
+        -------
+        float
+            The RA in degrees.
+    """
 
     xx = map(float, ra.split(':'))
     radeg = 15.0 * (xx[0] + xx[1]/60.0 + xx[2]/3600.0)
@@ -75,7 +159,19 @@ def convert_ra_to_deg(ra):
 
 ######################################################################
 def convert_dec_to_deg(dec):
-    """ Return DEC in degrees """
+    """ Convert DEC in sexagesimal format to decimal degrees, rounded
+        to 6 decimal places.
+
+        Parameters
+        ----------
+        dec : str
+            The DEC in sexagesimal format.
+
+        Returns
+        -------
+        float
+            The DEC in degrees.
+    """
 
     lteldec = dec.split(':')
     firstchar = lteldec[0][0]
@@ -89,16 +185,35 @@ def convert_dec_to_deg(dec):
 
 ######################################################################
 def fwhm_arcsec(farglist):
-    """ docstr """
-#
-#   This is derived from "calc_pixscale" in runSExtractor.c.  This python version is different
-#   from the original c code in that it checks to see if cd1_1 and cd2_2 are both non-zero, otherwise
-#   it skips the calculation of rho_a and rho_b to avoid ZeroDivisionError.
-#
+    """ Calculates the FWHM of the image in arcseconds from the input
+        data which contains the initial FWHM value and scaling values.
+
+        This is derived from "calc_pixscale" in runSExtractor.c.  This python version is different
+        from the original c code in that it checks to see if cd1_1 and cd2_2 are both non-zero, otherwise
+        it skips the calculation of rho_a and rho_b to avoid ZeroDivisionError.
+
+        Parameters
+        ----------
+        farglist : array like
+            Seven element list or similar type object containing the input data.
+
+        Returns
+        -------
+        float
+            The corrected FWHM in arcsec.
+
+        Raises
+        ------
+        TypeError
+            If there is not the correct number of arguments in the input object.
+
+        KeyError
+            If the calculation cannot be done due to unexpected data elements.
+    """
     # check number of arguments
     nargs = len(farglist)
     if nargs != 7:
-        raise TypeError("fwhm_arcsec() takes exactly 7 arguments (% given)" % nargs)
+        raise TypeError("fwhm_arcsec() takes exactly 7 arguments (%i given)" % nargs)
 
     # store values in farglist in local variables
     fwhm = float(farglist[0])

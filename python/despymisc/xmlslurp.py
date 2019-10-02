@@ -13,7 +13,13 @@ class Xmlslurper(object):
     """
     Class to read in an xml formatted file and convert the table contents to a python dictionary
 
-    takes the filename and the expected table names as inputs
+    Parameters
+    ----------
+    filename : str
+        The input file to read from
+
+    tablename : list
+        The tables to read in.
     """
     def __init__(self, filename, tablenames):
         self.data = {}
@@ -194,7 +200,8 @@ class Xmlslurper(object):
 
             Returns
             -------
-            Dict containing the current table data
+            dict
+                Contains the current table data.
 
         """
         return self.data['tables']

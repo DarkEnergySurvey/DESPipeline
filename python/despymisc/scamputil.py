@@ -8,24 +8,34 @@
 """
 
 def split_ahead_by_ccd(infile, outfile, ccd_list):
-    """
-    Function to take an .ahead (for SCAMP) and splits only those individual
-    HDUs/elements that correspond to CCDs requested.
+    """ Function to take an .ahead (for SCAMP) and splits only those individual
+        HDUs/elements that correspond to CCDs requested.
 
-    infile:  an ASCII file (typically and .ahead with WCS header descriptions
-    for all possible HDUs)
+        If the keyword CCDNUM is present in HDU components of the infile then these
+        will override how each element in the .ahead file is given.  This provides the
+        ability to have an empty/missing element but to maintain ordering.
 
-    outfile: an ASCII file containing only those HDUs of the infile that
-    are specified to be included by ccdlist
+        If a requested element is missing then False is returned.
+        This case is checked for before the output file is written.
 
-    ccdlist: an integer list of HDUs to include in the outfile
+        Parameters
+        ----------
+        infile : str
+            An ASCII file (typically and .ahead with WCS header descriptions
+            for all possible HDUs)
 
-    If the keyword CCDNUM is present in HDU components of the infile then these
-    will override how each element in the .ahead file is given.  This provides the
-    ability to have an empty/missing element but to maintain ordering.
+        outfile : str
+            An ASCII file containing only those HDUs of the infile that
+            are specified to be included by ccdlist
 
-    If a requested element is missing then a non-zero return code is given.
-    This case is checked for before the output file is written
+        ccdlist : list
+            An integer list of HDUs to include in the outfile
+
+        Returns
+        -------
+        bool
+            True if the output file was created, False otherwise.
+
     """
 
     # Optional list of keywords to be removed from input file before writing to output.
