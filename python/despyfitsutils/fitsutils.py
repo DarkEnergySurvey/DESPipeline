@@ -4,104 +4,28 @@
     **fitsutils**
     -------------
 
-    Miscellaneous generic support functions for fits files
+    Miscellaneous generic support functions for FITS files
 
 """
 
 import re
 import os
-import sys
 from astropy.io import fits
 
 import despymisc.miscutils as miscutils
 
 
-class makeMEF(object):
-
-    """
-    A Class to create a MEF fits files using astropy.io.fits
-    """
-
-    # -----------------------------------
-    # Translator for DES_EXT, being nice.
-    DES_EXT = {}
-    DES_EXT['SCI'] = 'IMAGE'
-    DES_EXT['WGT'] = 'WEIGHT'
-    DES_EXT['MSK'] = 'MASK'
-    # -----------------------
-
-    def __init__(self, **kwargs):
-
-
-        self.filenames = kwargs.pop('filenames', False)
-        self.outname = kwargs.pop('outname', False)
-        self.clobber = kwargs.pop('clobber', False)
-        self.extnames = kwargs.pop('extnames', None)
-        self.verb = kwargs.pop('verb', False)
-
-        # Make sure that filenames and outname are defined
-        if not self.filenames:
-            sys.exit("ERROR: must provide input file names")
-        if not self.outname:
-            sys.exit("ERROR: must provide output file name")
-
-        # Output file exits
-        if os.path.isfile(self.outname) and self.clobber is False:
-            print " [WARNING]: Output file exists, try --clobber option, no file was created"
-            return
-
-        self.read()
-        if self.extnames:
-            self.addEXTNAME()
-        self.write()
-
-        return
-
-    def addEXTNAME(self):
-
-        """Add a user-provided list of extension names to the MEF"""
-
-        if len(self.extnames) != len(self.filenames):
-            sys.exit("ERROR: number of extension names doesn't match filenames")
-            return
-
-        k = 0
-        for extname, hdu in zip(self.extnames, self.HDU):
-            if self.verb:
-                print "# Adding EXTNAME=%s to HDU %s" % (extname, k)
-            hdu[0].header.set('EXTNAME', extname, 'Extension Name', after='NAXIS2')
-            if extname in makeMEF.DES_EXT.keys():
-                hdu[0].header.set('DES_EXT', makeMEF.DES_EXT[extname], 'DESDM Extension Name', after='EXTNAME')
-
-            k += 1
-
-    def read(self):
-
-        """ Read in the HDUs """
-        self.HDU = []
-        k = 0
-        for fname in self.filenames:
-            if self.verb:
-                print "# Reading %s --> HDU %s" % (fname, k)
-            self.HDU.append(fits.open(fname))
-            k = k + 1
-
-    def write(self):
-
-        """ Write MEF file with no Primary HDU """
-        newhdu = fits.HDUList()
-
-        for hdu in self.HDU:
-            newhdu.append(hdu[0])# ,hdu[0].header)
-        if self.verb:
-            print "# Writing to: %s" % self.outname
-        newhdu.writeto(self.outname, overwrite=self.clobber)
-
-
 #######################################################################
 def combine_cats(incats, outcat):
-    """
-    Combine all input catalogs (each with 3 hdus) into a single fits file
+    """ Combine all input catalogs (each with 3 hdus) into a single FITS file.
+
+        Parameters
+        ----------
+        incats : str
+            Comma separated list of FITS files to combine.
+
+        outcat : str
+            The name of the catalog FITS file to create.
     """
 
     # if incats is comma-separated list, split into python list
@@ -138,11 +62,22 @@ def combine_cats(incats, outcat):
 
 
 def splitScampHead(head_out, heads):
-    """
-    Split single SCAMP output head file into individual files
-      head_out:  SCAMP output
-      head_lst:  list of filenames to use for individual files
-      reqheadcount: expected number of individual head files
+    """ Split single SCAMP output head file into individual files
+
+        Parameters
+        ----------
+        head_out : str
+            The input SCAMP file name
+
+        head_lst : str
+            Comma separated list of filenames to write out the individual
+            SCAMP heads to
+
+        Raises
+        ------
+        ValueError
+            If there is a mismatch in the data in the input file or if the
+            expected number of outputs is not found in the input file.
     """
 
     comma_re = re.compile(r"\s*,\s*")
@@ -186,11 +121,26 @@ def splitScampHead(head_out, heads):
         raise ValueError("Number of head files made (%d) does not match required number of head files (%d)" % (headcount, reqheadcount))
 
 
-
-
 #######################################################################
 def get_hdr(hdulist, whichhdu):
-    """ doc """
+    """ Get a specific header from an astropy.io.fits.HDUList
+
+        Parameters
+        ----------
+        hdulist : astropy.io.fits.HDUList
+            The list of HDU objects to search
+
+        whichhdu : various
+            The HDU being searched for, this can be an int for the HDU index,
+            a string for the HDU name, or ``None`` in which case the primary
+            HDU is used.
+
+        Returns
+        -------
+        astropy.io.fits.header
+            The requested header
+
+    """
     if whichhdu is None:
         whichhdu = 'Primary'
 
@@ -213,7 +163,26 @@ def get_hdr(hdulist, whichhdu):
 
 #######################################################################
 def get_hdr_value(hdulist, key, whichhdu=None):
-    """ doc """
+    """ Look up the value of `key` from the requested HDU header.
+
+        Parameters
+        ----------
+        hdulist : astropy.io.fits.HDUList
+            The list of HDU objects to search
+
+        key : str
+            The keyword whose value is returned.
+
+        whichhdu : various, optional
+            The HDU being searched for, this can be an int for the HDU index,
+            a string for the HDU name, or ``None`` in which case the primary
+            HDU is used. The default is ``None``.
+
+        Returns
+        -------
+        various
+            The value of the requested key word
+    """
     ukey = key.upper()
 
     hdr = get_hdr(hdulist, whichhdu)
@@ -223,7 +192,27 @@ def get_hdr_value(hdulist, key, whichhdu=None):
 
 #######################################################################
 def get_hdr_extra(hdulist, key, whichhdu=None):
-    """ doc """
+    """ Look up information about `key` in the specified HDU header. Any
+        comments and the type of the value of `key` are returned.
+
+        Parameters
+        ----------
+        hdulist : astropy.io.fits.HDUList
+            The list of HDU objects to search
+
+        key : str
+            The keyword whose information is returned
+
+        whichhdu : various, optional
+            The HDU being searched for, this can be an int for the HDU index,
+            a string for the HDU name, or ``None`` in which case the primary
+            HDU is used. The default is ``None``.
+
+        Returns
+        -------
+        tuple
+            Contains any comment and the data type.
+    """
     ukey = key.upper()
 
     hdr = get_hdr(hdulist, whichhdu)
@@ -234,7 +223,19 @@ def get_hdr_extra(hdulist, key, whichhdu=None):
 
 #######################################################################
 def get_ldac_imhead_as_cardlist(imhead):
-    """ doc """
+    """ Convert an HDU to a list of Cards.
+
+        Parameters
+        ----------
+        imhead : astropy.io.fits.HDU
+            The HDU to convert
+
+        Returns
+        -------
+        list
+            The cards from the HDU data
+
+    """
     data = imhead.data
     cards = []
     for cd in data[0][0]:
@@ -244,6 +245,17 @@ def get_ldac_imhead_as_cardlist(imhead):
 
 #######################################################################
 def get_ldac_imhead_as_hdr(imhead):
-    """ doc """
+    """ Convert an HDU to a header
+
+        Parameters
+        ----------
+        imhead : astropy.io.fits.HDU
+            The HDU to convert
+
+        Returns
+        -------
+        astropy.io.fits.header
+            Contains the data from the input.
+    """
     hdr = fits.Header(get_ldac_imhead_as_cardlist(imhead))
     return hdr
