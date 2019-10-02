@@ -10,7 +10,7 @@
 
 __version__ = "$Rev: 46337 $"
 
-import pyfits
+from astropy.io import fits
 
 from filemgmt.ftmgmt_genfits import FtMgmtGenFits
 import filemgmt.decam_keywords as decam_keywords
@@ -61,10 +61,9 @@ class FtMgmtRaw(FtMgmtGenFits):
             miscutils.fwdebug_print("INFO: beg")
 
         # open file
-        #hdulist = pyfits.open(fullname, 'update')
-        primary_hdr = pyfits.getheader(fullname, 0)
-        prihdu = pyfits.PrimaryHDU(header=primary_hdr)
-        hdulist = pyfits.HDUList([prihdu])
+        primary_hdr = fits.getheader(fullname, 0)
+        prihdu = fits.PrimaryHDU(header=primary_hdr)
+        hdulist = fits.HDUList([prihdu])
 
 
         # read metadata and call any special calc functions
@@ -125,7 +124,7 @@ def check_single_valid(keywords, fullname, verbose): # should raise exception if
     """
 
     # check fits file
-    hdulist = pyfits.open(fullname)
+    hdulist = fits.open(fullname)
     prihdr = hdulist[0].header
 
     # check exposure has correct filename (sometimes get NOAO-science-archive renamed exposures)
@@ -176,7 +175,7 @@ def check_header_keywords(keywords, hdunum, hdr):
         hdunum : int
             the HDU number
 
-        hdr : pyfits.Header
+        hdr : fits.Header
             The header object
 
         Returns

@@ -7,7 +7,7 @@
     Specialized functions for computing metadata
 """
 
-import pyfits
+from astropy.io import fits
 import despyfitsutils.fitsutils as fitsutils
 import despymisc.create_special_metadata as spmeta
 
@@ -20,11 +20,18 @@ import despymisc.create_special_metadata as spmeta
 
 ######################################################################
 def func_band(filename, hdulist=None, whichhdu=None):
-    """ Create band from the filter keyword """
+    """ Create band from the filter keyword
+
+        Parameters
+        ----------
+        filename : str
+            The file to get the filter keyword from (must be a fits file)
+
+    """
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -42,7 +49,7 @@ def func_camsym(filename, hdulist=None, whichhdu=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -60,7 +67,7 @@ def func_nite(filename, hdulist=None, whichhdu=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -78,7 +85,7 @@ def func_objects(filename, hdulist=None, whichhdu=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -96,7 +103,7 @@ def func_field(filename, hdulist=None, whichhdu=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -118,7 +125,7 @@ def func_radeg(filename, hdulist=None, whichhdu=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -136,7 +143,7 @@ def func_tradeg(filename, hdulist=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -154,7 +161,7 @@ def func_decdeg(filename, hdulist=None, whichhdu=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 
@@ -172,7 +179,7 @@ def func_tdecdeg(filename, hdulist=None):
 
     hdulist2 = None
     if hdulist is None:
-        hdulist2 = pyfits.open(filename, 'readonly')
+        hdulist2 = fits.open(filename, 'readonly')
     else:
         hdulist2 = hdulist
 

@@ -11,7 +11,7 @@
 import re
 import os
 import sys
-import pyfits
+from astropy.io import fits
 
 import despymisc.miscutils as miscutils
 
@@ -19,10 +19,7 @@ import despymisc.miscutils as miscutils
 class makeMEF(object):
 
     """
-    A Class to create a MEF fits files using pyfits, we might want to
-    migrated this to use fitsio in the future.
-
-    Felipe Menanteau, NCSA Aug 2014.
+    A Class to create a MEF fits files using astropy.io.fits
     """
 
     # -----------------------------------
@@ -53,9 +50,6 @@ class makeMEF(object):
             print " [WARNING]: Output file exists, try --clobber option, no file was created"
             return
 
-        # Get the Pyfits version as a float
-        self.pyfitsVersion = float(".".join(pyfits.__version__.split(".")[0:2]))
-
         self.read()
         if self.extnames:
             self.addEXTNAME()
@@ -75,39 +69,33 @@ class makeMEF(object):
         for extname, hdu in zip(self.extnames, self.HDU):
             if self.verb:
                 print "# Adding EXTNAME=%s to HDU %s" % (extname, k)
-            # Method for pyfits < 3.1
-            if self.pyfitsVersion < 3.1:
-                hdu[0].header.update('EXTNAME', extname, 'Extension Name', after='NAXIS2')
-                if extname in makeMEF.DES_EXT.keys():
-                    hdu[0].header.update('DES_EXT', makeMEF.DES_EXT[extname], 'DESDM Extension Name', after='EXTNAME')
-            else:
-                hdu[0].header.set('EXTNAME', extname, 'Extension Name', after='NAXIS2')
-                if extname in makeMEF.DES_EXT.keys():
-                    hdu[0].header.set('DES_EXT', makeMEF.DES_EXT[extname], 'DESDM Extension Name', after='EXTNAME')
+            hdu[0].header.set('EXTNAME', extname, 'Extension Name', after='NAXIS2')
+            if extname in makeMEF.DES_EXT.keys():
+                hdu[0].header.set('DES_EXT', makeMEF.DES_EXT[extname], 'DESDM Extension Name', after='EXTNAME')
 
             k += 1
 
     def read(self):
 
-        """ Read in the HDUs using pyfits """
+        """ Read in the HDUs """
         self.HDU = []
         k = 0
         for fname in self.filenames:
             if self.verb:
                 print "# Reading %s --> HDU %s" % (fname, k)
-            self.HDU.append(pyfits.open(fname))
+            self.HDU.append(fits.open(fname))
             k = k + 1
 
     def write(self):
 
         """ Write MEF file with no Primary HDU """
-        newhdu = pyfits.HDUList()
+        newhdu = fits.HDUList()
 
         for hdu in self.HDU:
             newhdu.append(hdu[0])# ,hdu[0].header)
         if self.verb:
             print "# Writing to: %s" % self.outname
-        newhdu.writeto(self.outname, clobber=self.clobber)
+        newhdu.writeto(self.outname, overwrite=self.clobber)
 
 
 #######################################################################
@@ -123,13 +111,13 @@ def combine_cats(incats, outcat):
     if miscutils.fwdebug_check(3, 'FITSUTILS_DEBUG'):
         miscutils.fwdebug_print("Constructing hdulist object for single fits file")
     # Construct hdulist object to append hdus from individual catalogs to
-    hdulist = pyfits.HDUList()
+    hdulist = fits.HDUList()
 
     # Now append the hdus from each input catalog file to the hdulist
     for incat in incat_lst:
         if miscutils.fwdebug_check(3, 'FITSUTILS_DEBUG'):
             miscutils.fwdebug_print("Appending 3 HDUs from cat --> %s" % incat)
-        hdulist1 = pyfits.open(incat, mode='readonly')
+        hdulist1 = fits.open(incat, mode='readonly')
         hdulist.append(hdulist1[0])
         hdulist.append(hdulist1[1])
         hdulist.append(hdulist1[2])
@@ -218,7 +206,6 @@ def get_hdr(hdulist, whichhdu):
         try:
             hdr = hdulist[whichhdu].header
         except KeyError:
-            # certain versions of pyfits always refer to Primary HDU only as Primary regardless of extname
             if hdulist[0].header['EXTNAME'] == whichhdu:
                 hdr = hdulist[0].header
     return hdr
@@ -251,12 +238,12 @@ def get_ldac_imhead_as_cardlist(imhead):
     data = imhead.data
     cards = []
     for cd in data[0][0]:
-        cards.append(pyfits.Card.fromstring(cd))
+        cards.append(fits.Card.fromstring(cd))
     return cards
 
 
 #######################################################################
 def get_ldac_imhead_as_hdr(imhead):
     """ doc """
-    hdr = pyfits.Header(get_ldac_imhead_as_cardlist(imhead))
+    hdr = fits.Header(get_ldac_imhead_as_cardlist(imhead))
     return hdr
