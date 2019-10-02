@@ -37,6 +37,6 @@ setuptools.setup(name='DESPipeline',
                                    'dateutil==1.5',
                                    'requests==2.10.0',
                                    'pycurl==7.43.0.2',
-                                   'globusonline',
                                    'psutil==4.3.1',
-                                   'pytz==2015.7'])
+                                   'pytz==2015.7',
+                                   'astropy==1.1.2'])
