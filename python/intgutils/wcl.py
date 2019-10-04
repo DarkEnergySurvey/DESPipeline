@@ -24,7 +24,10 @@ import intgutils.intgdefs as intgdefs
 import intgutils.replace_funcs as replfuncs
 
 class WCL(OrderedDict):
-    """ Base WCL class """
+    """ Base Worlkflow Control Language class, it inherits from OrderedDict,
+        overriding some basic interfaces, and adding some additional features.
+        All initialization arguments are passed directly to OrderedDict.__init__
+    """
 
     def __init__(self, *args, **kwds):
         """ Initialize with given wcl """
@@ -34,7 +37,14 @@ class WCL(OrderedDict):
 
     ###########################################################################
     def set_search_order(self, search_order):
-        """ Set the search order """
+        """ Set the search order
+
+            Parameters
+            ----------
+            search_order : OrderedDict
+                Dictionary of the sections to search, in the order to search them.
+
+        """
 
         self.search_order = search_order
 
@@ -47,7 +57,20 @@ class WCL(OrderedDict):
 
     ###########################################################################
     def get(self, key, opts=None, default=None):
-        """ Gets value of key in wcl, follows search order and section notation """
+        """ Gets value of key in wcl, follows search order and section notation
+
+            Parameters
+            ----------
+            key : str
+                The name of the key to obtain the value for.
+
+            opts : dict, optional
+                Additional search parameters. Default is ``None``.
+
+            default : str, optional
+                The default value to return if `key` is not found. Default
+                is ``None``.
+        """
 
         (found, value) = self.search(key, opts)
         if not found:
@@ -56,14 +79,17 @@ class WCL(OrderedDict):
         return value
 
     ###########################################################################
-    #def __setitem__(self, key, val):
-    #    """ x.__setitem__(i, y) <==> x[i]=y """
-    #    OrderedDict.__setitem__(self, key, val)
-
-
-    ###########################################################################
     def set(self, key, val):
-        """ Sets value of key in wcl, follows section notation """
+        """ Sets value of key in wcl, follows section notation
+
+            Parameters
+            ----------
+            key : str
+                The key to set the value for.
+
+            val : str
+                The value to set.
+        """
 
         if miscutils.fwdebug_check(9, "WCL_DEBUG"):
             miscutils.fwdebug_print("BEG key=%s, val=%s" % (key, val))
@@ -83,7 +109,27 @@ class WCL(OrderedDict):
 
     ###########################################################################
     def search(self, key, opt=None):
-        """ Searches for key using given opt following hierarchy rules """
+        """ Searches for key using given opt following hierarchy rules
+
+            Parameters
+            ----------
+            key : str
+                The name of the key to search for.
+
+            opt : dict, optional
+                Additional search parameters. Default is ``None``.
+
+            Returns
+            -------
+            tuple
+                Two element tuple containing a bool indicating whether `key`
+                was found, and its value.
+
+            Raises
+            ------
+            KeyError
+                If `key` cannot be found, but is required (specified in `opt`)
+        """
 
         if miscutils.fwdebug_check(8, 'WCL_DEBUG'):
             miscutils.fwdebug_print("\tBEG")
@@ -182,7 +228,21 @@ class WCL(OrderedDict):
     #######################################################################
     @classmethod
     def search_wcl_for_variables(cls, wcl):
-        """ Search the wcl for variables """
+        """ Search the WCL for variables
+
+            Parameters
+            ----------
+            cls : WCL
+                The WCl to search in.
+
+            wcl : dict or WCL
+                The items to search for.
+
+            Returns
+            -------
+            dict
+                Dictionary of items in `wcl` which were found in `cls`.
+        """
 
         if miscutils.fwdebug_check(9, "WCL_DEBUG"):
             miscutils.fwdebug_print("BEG")
@@ -208,13 +268,24 @@ class WCL(OrderedDict):
             miscutils.fwdebug_print("END")
         return usedvars
 
-
-
-
     #######################################################################
     def write(self, out_file=None, sortit=False, indent=4):
-        """Outputs a given dictionary in WCL format where items within
-           the same sub-dictionary are output in alphabetical order"""
+        """ Outputs a given dictionary in WCL format where items within
+            the same sub-dictionary are output in alphabetical order
+
+            Parameters
+            ----------
+            out_file : str, optional
+                The name of the output file. Default is ``None`` which means to
+                write to stdout.
+
+            sorit : bool, optional
+                Whether to sort the output (``True``) or not (``False``). Default
+                is ``False``.
+
+            indent : int, optional
+                The indentation to use, default is 4.
+        """
 
         if out_file is None:
             out_file = sys.stdout
@@ -245,7 +316,26 @@ class WCL(OrderedDict):
 
 
     def read(self, in_file=None, cmdline=False, filename='stdin'):
-        """Reads WCL text from an open file object and returns a dictionary"""
+        """ Reads WCL text from an open file object and converts it to the internal
+            content of this object.
+
+            Parameters
+            ----------
+            in_file : file
+                The file handle to use for reading.
+
+            cmdline : bool, optional
+                Whether the read item is a command line, used internally. Default
+                is ``False``.
+
+            filename : str, optional
+                The name of the input file. Default is 'stdin'
+
+            Raises
+            ------
+            SyntaxError
+                If there is a syntax error in the file.
+        """
 
         curr = self
         stack = []  # to keep track of current sub-dictionary
@@ -435,12 +525,30 @@ class WCL(OrderedDict):
 
     ############################################################
     def update(self, udict):
-        """ update allowing for nested dictionaries """
+        """ update allowing for nested dictionaries
+
+            Parameters
+            ----------
+            udict : dict
+                The dictionary to update this object with
+        """
         miscutils.updateOrderedDict(self, udict)
 
     ###########################################################################
     def getfull(self, key, opts=None, default=None):
-        """ Return with variables replaced and expanded if string(s) """
+        """ Return with variables replaced and expanded if string(s)
+
+            Parameters
+            ----------
+            key : str
+                The key whose value is to be returned.
+
+            opts : dict, optional
+                Options for processing the value. Default is ``None``.
+
+            default : various, optional
+                The default value to return. Default is ``None``.
+        """
 
         if miscutils.fwdebug_check(9, "WCL_DEBUG"):
             miscutils.fwdebug_print("BEG - key=%s" % key)
@@ -486,32 +594,3 @@ class WCL(OrderedDict):
                 stackinfo = stack[i].keys()
             print "\t%d: %s = %s" % (i, skey, stackinfo)
         print "\n\n"
-
-
-def run_test():
-    """Calls read and write routines as a test"""
-
-    # created in order for the following variables
-    # to be local instead of at module level
-
-    if len(sys.argv) != 2:
-        test_wcl_fh = sys.stdin
-        test_fname = 'stdin'
-    else:
-        test_fname = sys.argv[1]
-        test_wcl_fh = open(test_fname, "r")
-
-    testwcl = WCL()
-    try:
-        testwcl.read(test_wcl_fh, filename=test_fname)
-    except SyntaxError as err:
-        print err
-        sys.exit(1)
-
-    test_wcl_fh.close()
-    testwcl.write(sys.stdout, False, 4)
-    #   testwcl.write(sys.stdout, True, 4)
-
-
-if __name__ == "__main__":
-    run_test()

@@ -4,7 +4,7 @@
     **intgdefs**
     ------------
 
-    string definitions
+    String constants for this module
 """
 
 REPLACE_VARS = 'replace_vars'
@@ -15,10 +15,6 @@ LIST_FORMAT = 'format'
 DEFAULT_LIST_FORMAT = 'textsp'
 DEFAULT_QUERY_OUTPUT_FORMAT = 'wcl'
 
-
-
-# IW_  (wrapper) input wcl
-# OW_  (wrapper) output wcl
 IW_CHECK_CMDLINE = 'check_cmdline'
 IW_INPUTS = 'used'
 IW_OUTPUTS = 'was_generated_by'
@@ -37,13 +33,6 @@ IW_OUTPUT_OPTIONAL = 'optional'
 IW_FILE_SECT = 'filespecs'
 IW_META_SECT = 'filetype_metadata'
 
-#IW_META_HEADERS = 'headers'
-#IW_META_COMPUTE = 'compute'
-#IW_META_WCL = 'wcl'
-#IW_UPDATE_HEAD_PREFIX = 'hdrupd_'
-#IW_UPDATE_WHICH_HEAD = 'headers'
-#IW_REQ_META = 'req_metadata'
-#IW_OPT_META = 'opt_metadata'
 OW_EXEC_PREFIX = IW_EXEC_PREFIX
 OW_INPUTS = IW_INPUTS
 OW_OUTPUTS = IW_OUTPUTS

@@ -4,7 +4,7 @@
     **replace_funcs**
     -----------------
 
-    Functions to replace variables in a string with their values from a isinstance(dict) object
+    Functions to replace variables in a string with their values from a dict (WCL) object
 """
 
 import copy
@@ -16,7 +16,30 @@ import intgutils.intgdefs as intgdefs
 import despyfitsutils.fitsutils as fitsutils
 
 def replace_vars_single(instr, valdict, opts=None):
-    """ Return single instr after replacing vars """
+    """ Return single instr after replacing variables
+
+        Parameters
+        ----------
+        instr : str
+            The string which needs to have variables replaced.
+
+        valdict : dcit
+            Dictionary containing available variables and their
+            values
+
+        opts : dict, optional
+            Additional variable replacement values
+
+        Returns
+        -------
+        str
+            The value of `instr` with any variables replaced.
+
+        Raises
+        ------
+        KeyError
+            If a variable can not be replaced or located.
+    """
 
     assert isinstance(instr, str)
     #assert(isinstance(valdict, dict))
@@ -39,7 +62,38 @@ def replace_vars_single(instr, valdict, opts=None):
 
 
 def replace_vars_type(instr, valdict, required, stype, opts=None):
-    """ Search given string for variables of 1 type and replace """
+    """ Search given string for variables of 1 type and replace them
+
+        Parameters
+        ----------
+        instr : str
+            The input string whose variables need to be replaced
+
+        valdict : dict
+            Dictionary containing available variables and their
+            values
+
+        required : bool
+            Whether the replacement must be done
+
+        stype : str
+            The type of replacement being done
+
+        opts : dict, optional
+            Additional variable replacement values
+
+        Returns
+        -------
+        tuple
+            Three element tuple containing a bool which indicates whether
+            the replacement was complete, the new string with values reaplced,
+            and a dict of updated values.
+
+        Raises
+        ------
+        TypeError, ValueError
+            If there is an issue replacing the variables
+    """
 
     assert isinstance(instr, str)
     #assert(isinstance(valdict, dict))
@@ -160,7 +214,26 @@ def replace_vars_type(instr, valdict, required, stype, opts=None):
 
 
 def replace_vars_loop(valpair, valdict, opts=None):
-    """ Expand variables that have multiple values (e.g., band, ccdnum) """
+    """ Expand variables that have multiple values (e.g., band, ccdnum)
+
+        Parameters
+        ----------
+        valpair : list
+            The variable name and appropriate values to expand it to.
+
+        valdict : dict
+            Dictionary containing available variables and their
+            values
+
+        opts : dict, optional
+            Additional variable replacement values
+
+        Returns
+        -------
+        tuple
+            Two element tuple containing lists of expanded values and updated
+            values
+    """
 
     #assert(isinstance(valdict, dict))
 
@@ -237,7 +310,31 @@ def replace_vars_loop(valpair, valdict, opts=None):
 
 
 def replace_vars(instr, valdict, opts=None):
-    """ Replace variables in given instr """
+    """ Replace variables in given instr
+
+        Parameters
+        ----------
+        instr : str
+            The string which needs to have variables replaced.
+
+        valdict : dcit
+            Dictionary containing available variables and their
+            values
+
+        opts : dict, optional
+            Additional variable replacement values
+
+        Returns
+        -------
+        tuple
+            Two element tuple containing lists of expanded values and updated
+            values
+
+        Raises
+        ------
+        Exception
+            If the looping appears to be infinite.
+    """
 
     assert isinstance(instr, str)
     #assert(isinstance(valdict, dict))
