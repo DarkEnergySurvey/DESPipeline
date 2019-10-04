@@ -7,8 +7,6 @@
     Routines for performing tasks on files available through http.
 """
 
-__version__ = "$Rev: 18486 $"
-
 import os
 import sys
 import subprocess
@@ -86,7 +84,8 @@ class HttpUtils(object):
 
             Returns
             -------
-            bool, True if `P` is a url, False otherwise
+            bool
+                ``True`` if `P` is a url, ``False`` otherwise
 
             Examples
             --------
@@ -275,7 +274,8 @@ class HttpUtils(object):
 
             Returns
             -------
-            float of the time the transfer took in seconds
+            float
+                The time the transfer took in seconds
         """
         starttime = time.time()
         self.curl.setopt(pycurl.URL, self.src)
@@ -294,7 +294,8 @@ class HttpUtils(object):
 
             Returns
             -------
-            float of the time the transfer took in seconds
+            float
+                The time the transfer took in seconds
         """
         starttime = time.time()
         self.curl.setopt(pycurl.URL, self.dst)
@@ -337,7 +338,8 @@ class HttpUtils(object):
 
             Returns
             -------
-            tuple of the status ans file list
+            tuple
+                The status and file list
         """
         num_copies_from_archive = 0
         num_copies_to_archive = 0

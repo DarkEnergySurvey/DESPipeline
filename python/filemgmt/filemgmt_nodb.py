@@ -7,8 +7,6 @@
     Define a class to do file management tasks without DB
 """
 
-__version__ = "$Rev: 47142 $"
-
 import os
 
 import despymisc.miscutils as miscutils
@@ -16,20 +14,30 @@ import filemgmt.filemgmt_defs as fmdefs
 
 class FileMgmtNoDB(object):
     """ Class to manage files without a database
+
+        Parameters
+        ----------
+        config : dict, optional
+            Configuration options, default is ``None``.
+
+
     """
 
     @staticmethod
     def requested_config_vals():
-        """ Get the config values ans whether they are required or not """
-        return {'archive':'req', fmdefs.FILE_HEADER_INFO:'req', 'filetype_metadata':'req'}
+        """ Get the config values ans whether they are required or not
 
-    def __init__(self, config=None, argv=None):
+            Returns
+            -------
+            dict
+                The config values as keys and whether they are required or optional as the values.
+        """
+        return {'archive': fmdefs.REQUIRED,
+                fmdefs.FILE_HEADER_INFO: fmdefs.REQUIRED,
+                'filetype_metadata': fmdefs.REQUIRED}
+
+    def __init__(self, config=None):
         self.config = config
-        self.argv = argv
-
-    def get_list_filenames(self, args):
-        """ Not used for this class """
-        pass
 
     def is_file_in_archive(self, fnames, filelist, args):
         """ Determine if the requested file is in the archive
@@ -47,8 +55,9 @@ class FileMgmtNoDB(object):
 
             Returns
             -------
-            list of booleans, one for each file, stating whether the file
-            is in the archive (True) ro not (False)
+            list
+                Booleans, one for each file, stating whether the file
+                is in the archive (``True``) ro not (``False``).
         """
         archivename = args['archive']
         archivedict = self.config['archive'][archivename]
@@ -70,7 +79,8 @@ class FileMgmtNoDB(object):
 
             Returns
             -------
-            bool, True if the file type is valid, False otherwise
+            bool
+                ``True`` if the file type is valid, ``False`` otherwise
         """
         return ftype.lower() in self.config[fmdefs.FILETYPE_METADATA]
 
@@ -84,7 +94,8 @@ class FileMgmtNoDB(object):
 
             Returns
             -------
-            bool, True if the archive is valid, False otherwise
+            bool
+                ``True`` if the archive is valid, ``False`` otherwise
         """
         return arname.lower() in self.config['archive']
 
@@ -105,7 +116,8 @@ class FileMgmtNoDB(object):
 
             Returns
             -------
-            dict of the files and their locations
+            dict
+                The files and their locations
         """
         fileinfo = self.get_file_archive_info(filelist, arname, compress_order)
         rel_filenames = {}
@@ -132,7 +144,8 @@ class FileMgmtNoDB(object):
 
             Returns
             -------
-            dict of the files and their locations
+            dict
+                The files and their locations
         """
         # sanity checks
         if 'archive' not in self.config:
@@ -202,7 +215,8 @@ class FileMgmtNoDB(object):
 
             Returns
             -------
-            dict of the files and their info
+            dict
+                The files and their info
         """
         # sanity checks
         if 'archive' not in self.config:

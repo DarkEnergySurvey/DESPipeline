@@ -7,8 +7,6 @@
     Routines for performing tasks on files available through http.
 """
 
-__version__ = "$Rev: 42792 $"
-
 import os
 import sys
 import re
@@ -65,7 +63,8 @@ class EwdUtils(object):
 
             Returns
             -------
-            Tuple of the input string and a boolean (True if it is a url, False otherwise)
+            tuple
+                The input string and a boolean (True if it is a url, False otherwise)
 
             Examples
             --------
@@ -303,8 +302,9 @@ class EwdUtils(object):
                 Default: None
 
             Returns
-            ------
-            Tuple containing the status (int) and the file list
+            -------
+            tuple
+                The status (int) and the file list
         """
         num_copies_from_archive = 0
         num_copies_to_archive = 0

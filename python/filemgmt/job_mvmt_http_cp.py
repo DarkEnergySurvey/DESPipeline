@@ -8,8 +8,6 @@
     cp between job and target archive
 """
 
-__version__ = "$Rev: 45126 $"
-
 import copy
 
 import despymisc.miscutils as miscutils
@@ -38,16 +36,16 @@ class JobArchiveHttpCp(object):
         tstats : dict
             Dictionary for tracking transfer statistics
 
-        config : dict
-            Dictionary of config values, default is None
+        config : dict, optional
+            Dictionary of config values, default is ``None``
     """
     @staticmethod
     def requested_config_vals():
         """ Tell which values are req/opt for this object """
-        return {DES_SERVICES:fmdefs.REQUIRED, DES_HTTP_SECTION:fmdefs.REQUIRED}
+        return {DES_SERVICES: fmdefs.REQUIRED,
+                DES_HTTP_SECTION: fmdefs.REQUIRED}
 
     def __init__(self, homeinfo, targetinfo, mvmtinfo, tstats, config=None):
-        """ initialize object """
         self.home = homeinfo
         self.target = targetinfo
         self.mvmt = mvmtinfo
@@ -70,7 +68,8 @@ class JobArchiveHttpCp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
@@ -102,7 +101,8 @@ class JobArchiveHttpCp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
@@ -132,7 +132,8 @@ class JobArchiveHttpCp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
@@ -161,7 +162,8 @@ class JobArchiveHttpCp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         # if staging outside job, this function shouldn't be called
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):

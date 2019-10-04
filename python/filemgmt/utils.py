@@ -33,7 +33,8 @@ def http_code_str(hcode):
 
         Returns
         -------
-        Str containing the text description of the http code
+        str
+            The text description of the http code
     """
     codestr = "Unmapped http_code (%s)" % hcode
     code2str = {'200': 'Success/Ok',
@@ -75,7 +76,8 @@ def get_config_vals(archive_info, config, keylist):
 
         Returns
         -------
-        dict of the serach results
+        dict
+            The serach results
     """
     info = {}
     for k, st in keylist.items():
@@ -93,7 +95,18 @@ def get_config_vals(archive_info, config, keylist):
 
 
 def convert_permissions(perm):
-    """ convert numeric permissions to text based """
+    """ convert numeric permissions to text based
+
+        Parameters
+        ----------
+        perm : int or str
+            The numeric based permissions code to convert to text
+
+        Returns
+        -------
+        str
+            The converted permissions code
+    """
     if isinstance(perm, (int, long)):
         perm = str(perm)
     lead = 0
@@ -131,7 +144,18 @@ def convert_permissions(perm):
 
 
 def ls_ld(fname):
-    """ do an ls -ld on the given file/directory name """
+    """ Do an ls -ld on the given file/directory name
+
+        Parameters
+        ----------
+        fname : str
+            The object (file or directory) to do the ls on
+
+        Returns
+        -------
+        str
+            The result of the operation
+    """
     try:
         st = os.stat(fname)
         info = pwd.getpwuid(st.st_uid)
@@ -156,7 +180,15 @@ def ls_ld(fname):
 
 
 def find_ls(base):
-    """ do an ls -ld on each file/diretory in the given input and its children, recursively """
+    """ Do an ls -ld on each file/diretory in the given input and its children, recursively.
+        Printing the results to stdout
+
+        Parameters
+        ----------
+        base : str
+            The directory to do the recursive ls on
+
+    """
     for root, dirs, files in os.walk(base):
         for d in dirs:
             print ls_ld(os.path.join(root, d))
@@ -165,7 +197,18 @@ def find_ls(base):
 
 
 def get_mount_point(pathname):
-    """ Get the mount point of the filesystem containing pathname """
+    """ Get the mount point of the filesystem containing pathname
+
+        Parameters
+        ----------
+        pathname : str
+            The path on which to determine the mount point.
+
+        Returns
+        -------
+        str
+            The mount point
+    """
     pathname = os.path.normcase(os.path.realpath(pathname))
     parent_device = path_device = os.stat(pathname).st_dev
     while parent_device == path_device:
@@ -177,7 +220,23 @@ def get_mount_point(pathname):
     return mount_point
 
 def get_mounted_device(pathname):
-    "Get the device mounted at pathname"
+    """ Get the device mounted at pathname
+
+        Parameters
+        ----------
+        pathname : str
+            The path on which to determine the mount point.
+
+        Returns
+        -------
+        str
+            The device name
+
+        Raises
+        ------
+        EnvironmentError
+            If the operation raises this error, all others are suppressed.
+    """
     # uses "/proc/mounts"
     pathname = os.path.normcase(pathname) # might be unnecessary here
     try:
@@ -192,10 +251,20 @@ def get_mounted_device(pathname):
         raise
     return None # explicit
 
-def reduce(size):
-    """ reduce the input size from a large number to a much smaller one along with the
-        appropriate unit tag. The result will lose precision as it is cat to an int,
+def do_reduce(size):
+    """ Reduce the input size from a large number to a much smaller one along with the
+        appropriate unit tag. The result will lose precision as it is cast to an int,
         best for estimates.
+
+        Parameters
+        ----------
+        size : int
+            The value to reduce
+
+        Returns
+        -------
+        str
+            The reduced size along with unit label
 
         Examples
         --------
@@ -208,7 +277,18 @@ def reduce(size):
     return "%i%s" % (int(size), UNITS[count])
 
 def get_fs_space(pathname):
-    """ Get the free space of the filesystem containing pathname """
+    """ Get the free space of the filesystem containing pathname
+
+        Parameters
+        ----------
+        pathname : str
+            The reference path for which the file system free space is determined.
+
+        Returns
+        -------
+        tuple
+            The total, free and used space of the file system
+    """
     stat = os.statvfs(pathname)
     # use f_bfree for superuser, or f_bavail if filesystem
     # has reserved space for superuser
@@ -218,10 +298,16 @@ def get_fs_space(pathname):
     return total, free, used
 
 def df_h(path):
-    """ do a df -h """
+    """ Do a df -h on the given path and print out the results to stdout
+
+        Parameters
+        ----------
+        path : str
+            The path on which to do the operation
+    """
     mount = get_mount_point(path)
     dev = get_mounted_device(mount)
     total, free, used = get_fs_space(path)
     percent = int(100. * used/total)
     print 'Filesystem      Size   Used   Avail  Use%  Mounted on'
-    print '%-15s %s   %s   %s   %i%%   %s' % (dev, reduce(total), reduce(used), reduce(free), percent, mount)
+    print '%-15s %s   %s   %s   %i%%   %s' % (dev, do_reduce(total), do_reduce(used), do_reduce(free), percent, mount)

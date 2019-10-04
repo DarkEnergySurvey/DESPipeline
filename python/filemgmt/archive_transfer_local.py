@@ -7,9 +7,6 @@
     Class for transferring files locally
 """
 
-__version__ = "$Rev: 41008 $"
-
-
 import copy
 import despymisc.miscutils as miscutils
 import filemgmt.disk_utils_local as disk_utils_local
@@ -35,7 +32,8 @@ class ArchiveTransferLocal(object):
     """
     @staticmethod
     def requested_config_vals():
-        """ get the available config values """
+        """ Get the available config values.
+        """
         return {}    # no extra values needed
 
     # assumes home and target are on same machine
@@ -56,7 +54,8 @@ class ArchiveTransferLocal(object):
 
             Returns
             -------
-            TRansfer results
+            tuple
+                Transfer results
         """
         miscutils.fwdebug_print("\tNumber files to transfer: %d" % len(filelist))
         if miscutils.fwdebug_check(1, "ARCHIVETRANSFER_DEBUG"):

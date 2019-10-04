@@ -8,8 +8,6 @@
     such as metadata and content ingestion
 """
 
-__version__ = "$Rev: 47020 $"
-
 from collections import OrderedDict
 import time
 from astropy.io import fits
@@ -30,13 +28,12 @@ class FtMgmtGenFits(FtMgmtGeneric):
         config : dict
             Dictionary of config values
 
-        filepat : str
-            File pattern naming string, default is None
+        filepat : str, optional
+            File pattern naming string, default is ``None``
     """
 
     ######################################################################
     def __init__(self, filetype, config, filepat=None):
-        """ Initialize object """
         # config must have filetype_metadata and file_header_info
         FtMgmtGeneric.__init__(self, filetype, config, filepat)
 
@@ -57,7 +54,8 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
             Returns
             -------
-            dict containing the metadata
+            dict
+                The metadata
         """
         starttime = time.time()
         if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
@@ -103,7 +101,8 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
             Returns
             -------
-            dict containing the metadata
+            dict
+                The metadata
         """
 
         if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
@@ -185,7 +184,8 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
             Returns
             -------
-            OrderedDict of the update info
+            OrderedDict
+                The update info
         """
 
         metadefs = self.config['filetype_metadata'][self.filetype]
@@ -240,7 +240,8 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
             Returns
             -------
-            tuple of the description and data type
+            tuple
+                The description and data type
         """
 
         file_header_info = self.config['file_header']
@@ -270,7 +271,8 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
             Returns
             -------
-            dict of the updated header values with additional components
+            dict
+                The updated header values with additional components
         """
 
         upinfo2 = OrderedDict()
@@ -321,7 +323,8 @@ class FtMgmtGenFits(FtMgmtGeneric):
 
             Returns
             -------
-            tuple of the metadata and data definitions
+            tuple
+                The metadata and data definitions
         """
 
         metadata = OrderedDict()

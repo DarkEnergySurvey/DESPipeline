@@ -8,8 +8,6 @@
     such as metadata and content ingestion
 """
 
-__version__ = "$Rev: 46423 $"
-
 from collections import OrderedDict
 import copy
 import re
@@ -27,12 +25,11 @@ class FtMgmtGeneric(object):
         config : dict
             Dictionary of config values
 
-        filepat : str
-            File pattern naming string, default is None
+        filepat : str, optional
+            File pattern naming string, default is ``None``
     """
     ######################################################################
     def __init__(self, filetype, config, filepat=None):
-        """ Initialize object """
         # config must have filetype_metadata and file_header_info
         self.filetype = filetype
         self.config = config
@@ -50,8 +47,9 @@ class FtMgmtGeneric(object):
 
             Returns
             -------
-            dict of the filenames as keys and a bool as to whther they are of
-            the current file type (True) or not (False)
+            dict
+                The filenames as keys and a bool as to whther they are of
+                the current file type (``True``) or not (``False``).
         """
         assert isinstance(listfullnames, list)
 
@@ -81,7 +79,8 @@ class FtMgmtGeneric(object):
 
             Returns
             -------
-            dict containing the metadata
+            dict
+                The metadata
         """
 
         #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
@@ -109,8 +108,8 @@ class FtMgmtGeneric(object):
 
             Returns
             -------
-            dict containing the metadata
-
+            dict
+                The metadata
         """
 
         #if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
@@ -170,7 +169,8 @@ class FtMgmtGeneric(object):
 
             Returns
             -------
-            dict containing the metadata
+            dict
+                The metadata
         """
         metadata = OrderedDict()
 
@@ -207,7 +207,8 @@ class FtMgmtGeneric(object):
 
             Returns
             -------
-            dict containing the metadata
+            dict
+                The metadata
         """
 
         if self.filepat is None:

@@ -8,12 +8,10 @@
     such as metadata and content ingestion
 """
 
-__version__ = "$Rev: 41700 $"
-
 from filemgmt.ftmgmt_generic import FtMgmtGeneric
 
 class FtMgmtDatafile(FtMgmtGeneric):
-    """  Class for managing a filetype whose contents can be read by datafile_ingest
+    """  Class for managing a generic data file type
 
         Parameters
         ----------
@@ -23,13 +21,11 @@ class FtMgmtDatafile(FtMgmtGeneric):
         config : dict
             Dictionary of config values
 
-        filepat : str
-            File pattern naming string, default is None
+        filepat : str, optional
+            File pattern naming string, default is ``None``
 
     """
-
     ######################################################################
     def __init__(self, filetype, config, filepat=None):
-        """ Initialize object """
         # config must have filetype_metadata and file_header_info
         FtMgmtGeneric.__init__(self, filetype, config, filepat=None)

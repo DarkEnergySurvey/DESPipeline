@@ -7,8 +7,6 @@
     Move files locally
 """
 
-__version__ = "$Rev: 46423 $"
-
 import copy
 
 import despymisc.miscutils as miscutils
@@ -30,8 +28,8 @@ class JobArchiveLocal(object):
         tstats : dict
             Dictionary for tracking transfer statistics
 
-        config : dict
-            Dictionary of config values, default is None
+        config : dict, optional
+            Dictionary of config values, default is ``None``
     """
     # assumes home, target, and job dirs are read/write same machine
 
@@ -58,7 +56,8 @@ class JobArchiveLocal(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
@@ -91,7 +90,8 @@ class JobArchiveLocal(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
@@ -120,7 +120,8 @@ class JobArchiveLocal(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))
@@ -149,7 +150,8 @@ class JobArchiveLocal(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if miscutils.fwdebug_check(3, "JOBFILEMVMT_DEBUG"):
             miscutils.fwdebug_print("len(filelist)=%s" % len(filelist))

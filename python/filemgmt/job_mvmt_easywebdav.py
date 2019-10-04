@@ -7,8 +7,6 @@
     Class for transferring files via webdav
 """
 
-__version__ = "$Rev: 46423 $"
-
 import copy
 import re
 
@@ -35,8 +33,8 @@ class JobArchiveEwd(object):
         tstats : dict
             Dictionary for tracking transfer statistics
 
-        config : dict
-            Dictionary of config values, default is None
+        config : dict, optional
+            Dictionary of config values, default is ``None``
     """
     # assumes home, target, and job dirs are read/write same machine
 
@@ -44,7 +42,8 @@ class JobArchiveEwd(object):
     def requested_config_vals():
         """ Get the configuration values for this class
         """
-        return {DES_SERVICES: fmdefs.REQUIRED, DES_HTTP_SECTION: fmdefs.REQUIRED}
+        return {DES_SERVICES: fmdefs.REQUIRED,
+                DES_HTTP_SECTION: fmdefs.REQUIRED}
 
     def __init__(self, homeinfo, targetinfo, mvmtinfo, tstats, config=None):
         #pylint: disable=unused-argument
@@ -73,7 +72,8 @@ class JobArchiveEwd(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         # if staging outside job, this function shouldn't be called
         if self.home is None:
@@ -101,7 +101,8 @@ class JobArchiveEwd(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
@@ -126,7 +127,8 @@ class JobArchiveEwd(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
@@ -151,7 +153,8 @@ class JobArchiveEwd(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         # if staging outside job, this function shouldn't be called
         if verify:

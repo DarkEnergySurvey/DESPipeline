@@ -1,4 +1,9 @@
 """
+    .. _deswebdav-client:
+
+    **client**
+    ----------
+
     Webdav client for DES based on webdav-client-python3 (https://github.com/ezhov-evgeny/webdav-client-python-3), version 0.12
 """
 #pylint: disable=c-extension-no-member,too-many-public-methods

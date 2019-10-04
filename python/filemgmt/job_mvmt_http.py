@@ -7,8 +7,6 @@
     Move files via http
 """
 
-__version__ = "$Rev: 18938 $"
-
 import copy
 
 import despymisc.miscutils as miscutils
@@ -34,15 +32,16 @@ class JobArchiveHttp(object):
         tstats : dict
             Dictionary for tracking transfer statistics
 
-        config : dict
-            Dictionary of config values, default is None
+        config : dict, optional
+            Dictionary of config values, default is ``None``
     """
     # assumes home, target, and job dirs are read/write same machine
     @staticmethod
     def requested_config_vals():
         """ Get the configuration values for this class
         """
-        return {DES_SERVICES:fmdefs.REQUIRED, DES_HTTP_SECTION:fmdefs.REQUIRED}
+        return {DES_SERVICES: fmdefs.REQUIRED,
+                DES_HTTP_SECTION: fmdefs.REQUIRED}
 
     def __init__(self, homeinfo, targetinfo, mvmtinfo, tstats, config=None):
         self.home = homeinfo
@@ -68,7 +67,8 @@ class JobArchiveHttp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         # if staging outside job, this function shouldn't be called
         if self.home is None:
@@ -96,7 +96,8 @@ class JobArchiveHttp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
@@ -121,7 +122,8 @@ class JobArchiveHttp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         if self.target is None:
             raise Exception("Target archive info is None.   Should not be calling this function")
@@ -146,7 +148,8 @@ class JobArchiveHttp(object):
 
             Returns
             -------
-            dict of the results
+            dict
+                The results
         """
         # if staging outside job, this function shouldn't be called
         if self.home is None:

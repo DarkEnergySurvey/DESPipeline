@@ -8,8 +8,6 @@
     such as metadata and content ingestion
 """
 
-__version__ = "$Rev: 46337 $"
-
 from astropy.io import fits
 
 from filemgmt.ftmgmt_genfits import FtMgmtGenFits
@@ -27,13 +25,12 @@ class FtMgmtRaw(FtMgmtGenFits):
         config : dict
             Dictionary of config values
 
-        filepat : str
-            File pattern naming string, default is None
+        filepat : str, optional
+            File pattern naming string, default is ``None``
 
     """
     ######################################################################
     def __init__(self, filetype, config, filepat=None):
-        """ Initialize object """
         # config must have filetype_metadata, file_header_info, keywords_file (OPT)
         FtMgmtGenFits.__init__(self, filetype, config, filepat)
 
@@ -54,7 +51,8 @@ class FtMgmtRaw(FtMgmtGenFits):
 
             Returns
             -------
-            dict containing the metadata
+            dict
+                The metadata
         """
 
         if miscutils.fwdebug_check(3, 'FTMGMT_DEBUG'):
@@ -84,7 +82,13 @@ class FtMgmtRaw(FtMgmtGenFits):
 
     ######################################################################
     def check_valid(self, listfullnames):
-        """ Check whether the given files are valid raw files """
+        """ Check whether the given files are valid raw files
+
+            Parameters
+            ----------
+            listfullnames : list
+                A list of the full file names to check.
+        """
 
         assert isinstance(listfullnames, list)
 
@@ -180,8 +184,9 @@ def check_header_keywords(keywords, hdunum, hdr):
 
         Returns
         -------
-        tuple containing required key words that were not found, optional key words
-        that were not found, and extra key words that were found
+        tuple
+            Required key words that were not found, optional key words
+            that were not found, and extra key words that were found
 
     """
     # missing has the keywords which are missing in the file and are required for processing

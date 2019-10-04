@@ -7,8 +7,6 @@
     Generic routines for performing tasks on files that can be seen locally
 """
 
-__version__ = "$Rev: 46644 $"
-
 import os
 import sys
 import shutil
@@ -32,7 +30,8 @@ def get_md5sum_file(fullname, blksize=2**15):
 
         Returns
         -------
-        String of the md5sum
+        str
+            The md5sum
     """
     md5 = hashlib.md5()
     with open(fullname, 'rb') as fhandle:
@@ -52,8 +51,8 @@ def get_file_disk_info(arg):
 
         Returns
         -------
-        Dict containing the requested info.
-
+        dict
+            The requested info.
     """
 
     if isinstance(arg, list):
@@ -124,7 +123,8 @@ def get_file_disk_info_list(filelist, save_md5sum=False):
 
         Returns
         -------
-        Dict of the resulting data
+        dict
+            The resulting data
     """
 
     fileinfo = {}
@@ -150,7 +150,8 @@ def get_file_disk_info_path(path, save_md5sum=False):
 
         Returns
         -------
-        Dict of the resulting data
+        dict
+            The resulting data
 
     """
     # if relative path, is treated relative to current directory
@@ -183,8 +184,9 @@ def copyfiles(filelist, tstats, verify=False):
 
         Returns
         -------
-        Tuple containing the exit status of the transfer and a dictionary of
-        the transfer results
+        tuple
+            The exit status of the transfer and a dictionary of
+            the transfer results
     """
 
     status = 0
