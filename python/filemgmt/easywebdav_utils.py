@@ -11,16 +11,15 @@ __version__ = "$Rev: 42792 $"
 
 import os
 import sys
-import shutil
 import re
 import traceback
 import time
 
+import deswebdav.client as webdav
 import despyserviceaccess.serviceaccess as serviceaccess
 import despymisc.miscutils as miscutils
 import filemgmt.filemgmt_defs as fmdefs
 import filemgmt.disk_utils_local as dul
-import deswebdav as webdav
 
 class EwdUtils(object):
     """ Class to handle data transfers. Uses easywebdav for the connection and transfers.
@@ -34,7 +33,7 @@ class EwdUtils(object):
             Name of the section in the services file which specified the connection information
 
         destination : str
-            Name or IP of the destination host.
+            URL or IP of the destination host.
 
         Examples
         --------
@@ -47,7 +46,9 @@ class EwdUtils(object):
             # Parse the .desservices.ini file:
             self.auth_params = serviceaccess.parse(des_services, des_http_section)
             # set up the connection
-            self.webdav = webdav.connect(destination, username=self.auth_params['user'], password=self.auth_params['passwd'])
+            self.webdav = webdav.Client({'webdav_hostname': destination,
+                                         'webdav_login': self.auth_params['user'],
+                                         'webdav_password': self.auth_params['passwd']})
         except Exception as err:
             miscutils.fwdie("Unable to get curl password (%s)" % err, fmdefs.FM_EXIT_FAILURE)
 
@@ -66,6 +67,8 @@ class EwdUtils(object):
             -------
             Tuple of the input string and a boolean (True if it is a url, False otherwise)
 
+            Examples
+            --------
             >>> C = EwdUtils('test_http_utils/.desservices.ini', 'file-http', 'des.cosmology.edu')
             >>> C.check_url("http://desar2.cosmology.illinois.edu")
             ('http://desar2.cosmology.illinois.edu', True)
@@ -182,13 +185,13 @@ class EwdUtils(object):
                 if checksize:
                     # get the remote and local file sizes
                     if down:
-                        info = self.webdav.ls(sfile)
-                        fs1 = info[0].size
+                        info = self.webdav.info(sfile)
+                        fs1 = info['size']
                         fs = os.stat(dfile).st_size
                     else:
                         fs1 = os.stat(sfile).st_size
-                        info = self.webdav.ls(dfile)
-                        fs = info[0].size
+                        info = self.webdav.info(dfile)
+                        fs = info['size']
                     if fs1 != fs:
                         print "Filesizes do not match, expected %i, got %i" % (fs1, fs)
                     else:
@@ -380,81 +383,3 @@ class EwdUtils(object):
 
         EwdUtils.copyfiles_called += 1
         return (status, filelist)
-
-    def test_copyfiles(self):
-        """ Method to test the file transfer
-
-        """
-        # Keeping these copies in separate lists since otherwise can't ensure the order they
-        # would be copied in.
-        test_filelist1 = {'testfile_dh.txt': {'compression': None,
-                                              'src': './testfile_dh.txt',
-                                              'filename': 'testfile_dh.txt',
-                                              'filesize': 12,
-                                              'path': './',
-                                              'dst': 'http://desar2.cosmology.illinois.edu/DESTesting/testfile_dh.txt'}}
-        test_filelist2 = {'testfile_dh2.txt': {'compression': None,
-                                               'src': 'http://desar2.cosmology.illinois.edu/DESTesting/testfile_dh.txt',
-                                               'filename': '20130716_bpm_10.fits',
-                                               'filesize': 16781760,
-                                               'path': 'refacthome/OPS/cal/bpm/',
-                                               'dst': 'test_dh/testfile_dh2.txt'}}
-        test_filelist3 = {'testfile_dh3.txt': {'compression': None,
-                                               'src': './testfile_dh.txt',
-                                               'filename': 'testfile_dh.txt',
-                                               'filesize': 12,
-                                               'path': './',
-                                               'dst': 'http://desar2.cosmology.illinois.edu/DESTesting/bar/testfile_dh3.txt'}}
-        test_filelist4 = {'testfile_dh4.txt': {'compression': None,
-                                               'dst': 'test_dh/testfile_dh3.txt',
-                                               'filename': 'testfile_dh.txt',
-                                               'filesize': 12,
-                                               'path': './',
-                                               'src': 'http://desar2.cosmology.illinois.edu/DESTesting/bar/testfile_dh3.txt'}}
-        test_filelist5 = {'testfile_dh5.txt': {'compression': None,
-                                               'dst': 'test_dh/testfile_dh5.txt',
-                                               'filename': 'testfile_dh.txt',
-                                               'filesize': 12,
-                                               'path': './',
-                                               'src': 'http://desar2.cosmology.illinois.edu/DESTesting/bar/arggdfsbqwr.txt'}}
-
-        shutil.rmtree('test_dh', True)
-        with open("testfile_dh.txt", "w") as f:
-            f.write("hello, world")
-
-        self.copyfiles(test_filelist1, None)
-        self.copyfiles(test_filelist2, None)
-        if os.path.isfile('test_dh/testfile_dh2.txt') and os.path.getsize('test_dh/testfile_dh2.txt') == 12:
-            print "Transfer of test_dh2.txt seems ok"
-        else:
-            miscutils.fwdie("Transfer of test_dh2.txt failed", fmdefs.FM_EXIT_FAILURE)
-        self.webdav.delete("DESTesting/testfile_dh.txt")
-
-        self.copyfiles(test_filelist3, None)
-        self.copyfiles(test_filelist4, None)
-        if os.path.isfile('test_dh/testfile_dh3.txt') and os.path.getsize('test_dh/testfile_dh3.txt') == 12:
-            print "Transfer of test_dh3.txt (with an intermediate dir) seems ok"
-        else:
-            miscutils.fwdie("Transfer of test_dh3.txt (with an intermediate dir) failed", fmdefs.FM_EXIT_FAILURE)
-        self.webdav.delete("DESTesting/bar/testfile_dh3.txt")
-        self.webdav.delete("DESTesting/bar/")
-
-        (_, filelist5_out) = self.copyfiles(test_filelist5, None, secondsBetweenRetriesC=1, numTriesC=2)
-        if filelist5_out['testfile_dh5.txt'].has_key('err') and filelist5_out['testfile_dh5.txt']['err'] == 'File operation failed with return code 22, http status 404.':
-            print "Test of failed GET seems ok."
-        else:
-            miscutils.fwdie("Test of failed GET failed", fmdefs.FM_EXIT_FAILURE)
-
-        os.system("rm -f ./testfile_dh.txt")
-        shutil.rmtree('test_dh', True)
-
-
-if __name__ == "__main__":
-    # To run these unit tests first copy .desservices.ini_example to .desservices.ini
-    # in test_http_utils/, and set user and passwd. Then use this command:
-    #    python ./http_utils.py -v
-    import doctest
-    doctest.testmod()
-    C = EwdUtils('test_http_utils/.desservices.ini', 'file-http', 'desar2.cosmology.illinois.edu')
-    C.test_copyfiles()
-    # miscutils.fwdie("Test miscutils.fwdie", fmdefs.FM_EXIT_FAILURE)
